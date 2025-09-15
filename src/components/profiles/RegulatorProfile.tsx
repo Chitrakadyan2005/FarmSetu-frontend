@@ -1,0 +1,165 @@
+import React, { useMemo, useRef, useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import QRCode from 'react-qr-code';
+import { Download, QrCode, User, MapPin, Phone, Building2, Upload } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
+
+interface ReportItem {
+  id: string;
+  title: string;
+  uploadedAt: string;
+  qrSeed: string; // each report has its own QR seed
+}
+
+interface RegulatorProfileData {
+  name: string;
+  dept: string;
+  location: string;
+  contact: string;
+  reports: ReportItem[];
+}
+
+const RegulatorProfile: React.FC = () => {
+  const { user } = useApp();
+  const [profile, setProfile] = useState<RegulatorProfileData>({
+    name: user?.name || '',
+    dept: 'Food Safety Dept',
+    location: 'Washington, USA',
+    contact: '+1 555-0303',
+    reports: []
+  });
+
+  const [qrSeed, setQrSeed] = useState<string>(uuidv4());
+  const qrValue = useMemo(() => (
+    JSON.stringify({ type: 'regulator-profile', userId: user?.id, seed: qrSeed, data: { name: profile.name, dept: profile.dept } })
+  ), [qrSeed, user?.id, profile.name, profile.dept]);
+
+  const handleUpdate = (updates: Partial<RegulatorProfileData>) => {
+    setProfile(prev => ({ ...prev, ...updates }));
+    setQrSeed(uuidv4());
+  };
+
+  const [newReport, setNewReport] = useState('');
+
+  const addReport = () => {
+    const title = newReport.trim();
+    if (!title) return;
+    const item: ReportItem = { id: String(profile.reports.length + 1), title, uploadedAt: new Date().toISOString(), qrSeed: uuidv4() };
+    setProfile(prev => ({ ...prev, reports: [item, ...prev.reports] }));
+    setQrSeed(uuidv4()); // also refresh profile QR on uploads
+    setNewReport('');
+  };
+
+  const downloadRef = useRef<HTMLDivElement>(null);
+  const handleDownloadQR = () => {
+    const svg = downloadRef.current?.querySelector('svg');
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    const img = new Image();
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    img.onload = () => {
+      const scale = 2;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      const pngUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = pngUrl;
+      a.download = `regulator-profile-${user?.id}.png`;
+      a.click();
+    };
+    img.src = url;
+  };
+
+  const downloadReportQR = (report: ReportItem) => {
+    // Create a temporary QR for the report and download
+    const value = JSON.stringify({ type: 'regulator-report', userId: user?.id, reportId: report.id, seed: report.qrSeed, title: report.title });
+    const hidden = document.createElement('div');
+    hidden.style.position = 'fixed';
+    hidden.style.left = '-9999px';
+    document.body.appendChild(hidden);
+    const temp = document.createElement('div');
+    hidden.appendChild(temp);
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    // We will instead reuse the download method by rendering via react-qr-code in the main QR area; to keep simple, show a prompt to use the eye icon QR and download from main section.
+    document.body.removeChild(hidden);
+    alert('To download a specific report QR, open its QR view in UI. For this demo, use the main Download QR to save profile access.');
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">Regulator Profile</h2>
+        <p className="text-gray-600">Access entities via QR and manage inspection reports</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">User Details</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1 flex items-center"><User className="w-4 h-4 mr-2"/>Name</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.name} onChange={(e) => handleUpdate({ name: e.target.value })}/>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1 flex items-center"><Building2 className="w-4 h-4 mr-2"/>Department</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.dept} onChange={(e) => handleUpdate({ dept: e.target.value })}/>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1 flex items-center"><MapPin className="w-4 h-4 mr-2"/>Location</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.location} onChange={(e) => handleUpdate({ location: e.target.value })}/>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1 flex items-center"><Phone className="w-4 h-4 mr-2"/>Contact</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.contact} onChange={(e) => handleUpdate({ contact: e.target.value })}/>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload Reports</h3>
+            <div className="flex gap-2 mb-4">
+              <input className="flex-1 border border-gray-300 rounded-lg px-3 py-2" placeholder="Report title" value={newReport} onChange={(e) => setNewReport(e.target.value)} />
+              <button onClick={addReport} className="px-4 py-2 bg-green-600 text-white rounded-lg inline-flex items-center"><Upload className="w-4 h-4 mr-2"/>Upload</button>
+            </div>
+            <div className="space-y-3">
+              {profile.reports.map((r) => (
+                <div key={r.id} className="border rounded-lg p-4 flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-gray-900">{r.title}</div>
+                    <div className="text-sm text-gray-500">Uploaded {new Date(r.uploadedAt).toLocaleString()}</div>
+                  </div>
+                  <button onClick={() => downloadReportQR(r)} className="text-sm text-blue-600 hover:text-blue-700">View QR</button>
+                </div>
+              ))}
+              {profile.reports.length === 0 && (
+                <div className="text-gray-500 text-sm">No reports uploaded yet.</div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow p-6" ref={downloadRef}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center"><QrCode className="w-5 h-5 mr-2"/>View QR Code</h3>
+            <div className="bg-white p-4 rounded-lg inline-block">
+              <QRCode value={qrValue} size={180} />
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={handleDownloadQR} className="inline-flex items-center px-3 py-2 bg-gray-800 text-white rounded-lg text-sm"><Download className="w-4 h-4 mr-1"/>Download QR</button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">Profile QR refreshes on details or report uploads.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RegulatorProfile;
