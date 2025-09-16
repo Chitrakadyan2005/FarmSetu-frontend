@@ -160,7 +160,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                   className="bg-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center"
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  Scan QR
+                  Scan
                 </button>
                 <span className="flex items-center text-gray-500 px-3">OR</span>
               </div>
@@ -527,7 +527,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
       <div className="bg-white rounded-lg shadow p-6 mb-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <Scan className="w-5 h-5 mr-2" />
-          Product Scanner
+          QR Scanner
         </h3>
         <div className="flex space-x-2 items-center">
           <button
@@ -535,7 +535,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             className="bg-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center"
           >
             <Camera className="w-4 h-4 mr-2" />
-            Scan QR
+            Scan
           </button>
           <span className="text-gray-500">OR</span>
           <input

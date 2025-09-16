@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Plus, Calendar, DollarSign, TrendingUp, QrCode, Scan, Eye, Camera, Search } from 'lucide-react';
+import { Package, Plus, Calendar, DollarSign, TrendingUp, QrCode, Scan, Eye } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
 import QRCode from 'react-qr-code';
@@ -271,48 +271,24 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
 
       {/* QR Scanner */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="text-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Product Scanner</h3>
-          <p className="text-gray-600">Scan products to view their journey and details</p>
-        </div>
-
-        <div className="flex flex-col items-center">
-          <div className="w-64 h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-6">
-            <div className="text-center">
-              <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">QR Scanner Viewport</p>
-              <p className="text-sm text-gray-500">Click scan to open camera</p>
-            </div>
-          </div>
-
-          <div className="w-full max-w-md space-y-4">
-            <div className="flex space-x-2">
-              <button
-                onClick={() => alert('Camera would open here in a real app. For demo, please use the input field.')}
-                className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center"
-              >
-                <Camera className="w-4 h-4 mr-2" />
-                Scan QR
-              </button>
-              <span className="flex items-center text-gray-500 px-3">OR</span>
-            </div>
-            
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={scanInput}
-                onChange={(e) => setScanInput(e.target.value)}
-                placeholder="Type Batch ID or paste QR content"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-              <button
-                onClick={handleScan}
-                className="bg-gray-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Scan className="w-5 h-5 mr-2" />
+          QR Scanner
+        </h3>
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={scanInput}
+            onChange={(e) => setScanInput(e.target.value)}
+            placeholder="Paste QR code content here..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+          <button
+            onClick={handleScan}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
+          >
+            Scan
+          </button>
         </div>
         
         {scanResult && (
