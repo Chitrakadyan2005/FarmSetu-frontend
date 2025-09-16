@@ -271,10 +271,11 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
 
       {/* QR Scanner */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
           <Scan className="w-5 h-5 mr-2" />
-          QR Scanner
+          Product Scanner
         </h3>
+        <p className="text-gray-600 mb-4">Scan products to view their journey and details</p>
         <div className="flex space-x-2">
           <input
             type="text"
@@ -287,7 +288,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             onClick={handleScan}
             className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
           >
-            Scan
+            Scan QR
           </button>
         </div>
         
