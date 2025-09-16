@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight } from 'lucide-react';
+import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
 
@@ -7,23 +7,85 @@ interface ConsumerDashboardProps {
   currentPage: string;
 }
 
+interface Purchase {
+  id: string;
+  batchId: string;
+  product: string;
+  quantity: number;
+  price: number;
+  date: string;
+  location: string;
+  journey: any[];
+  feedback?: string;
+  rating?: number;
+}
+
 const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) => {
   const { getBatchById } = useApp();
-  const [searchInput, setSearchInput] = useState('');
+  const [scanInput, setScanInput] = useState('');
   const [scannedBatch, setScannedBatch] = useState<ProduceBatch | null>(null);
   const [scanResult, setScanResult] = useState<'found' | 'not-found' | null>(null);
+  const [showBuyForm, setShowBuyForm] = useState<any>(null);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [showJourneyModal, setShowJourneyModal] = useState<Purchase | null>(null);
+  
+  const [buyForm, setBuyForm] = useState({
+    quantity: '',
+    price: ''
+  });
 
   const handleScan = () => {
-    if (searchInput.trim()) {
-      const batch = getBatchById(searchInput.trim().toUpperCase());
+    if (scanInput.trim()) {
+      const batch = getBatchById(scanInput.trim().toUpperCase());
       if (batch) {
         setScannedBatch(batch);
         setScanResult('found');
       } else {
-        setScannedBatch(null);
-        setScanResult('not-found');
+        // Try parsing as QR JSON
+        try {
+          const data = JSON.parse(scanInput);
+          if (data.type === 'farmer-batch' || data.type === 'distributor-batch') {
+            setScannedBatch(data.data);
+            setScanResult('found');
+            // Show buy form
+            setShowBuyForm({
+              ...data,
+              buyerName: 'Sarah Consumer',
+              buyerProfession: 'Consumer',
+              date: new Date().toISOString().split('T')[0],
+              location: 'Oregon, USA'
+            });
+          } else {
+            setScanResult('not-found');
+          }
+        } catch {
+          setScannedBatch(null);
+          setScanResult('not-found');
+        }
       }
     }
+  };
+
+  const handleBuy = () => {
+    if (!buyForm.quantity || !buyForm.price) return;
+    
+    const purchase: Purchase = {
+      id: `P${Date.now()}`,
+      batchId: showBuyForm.batchId,
+      product: showBuyForm.data?.cropType || 'Unknown Product',
+      quantity: Number(buyForm.quantity),
+      price: Number(buyForm.price),
+      date: showBuyForm.date,
+      location: showBuyForm.location,
+      journey: showBuyForm.data?.journey || []
+    };
+    
+    setPurchases(prev => [purchase, ...prev]);
+    setShowBuyForm(null);
+    setBuyForm({ quantity: '', price: '' });
+    
+    // Simulate blockchain entry
+    console.log('Blockchain entry created:', purchase);
   };
 
   const getJourneySteps = (batch: ProduceBatch) => {
@@ -38,7 +100,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
       }
     ];
 
-    batch.transfers.forEach((transfer, index) => {
+    batch.transfers?.forEach((transfer, index) => {
       steps.push({
         title: `Transfer ${index + 1}`,
         description: transfer.to,
@@ -56,11 +118,11 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">QR Code Scanner</h2>
-          <p className="text-gray-600">Scan or enter a Batch ID to trace your food's journey</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Scanner & Purchase History</h2>
+          <p className="text-gray-600">Scan products and view your purchase history</p>
         </div>
 
-        {/* Scanner Simulation */}
+        {/* Scanner */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <div className="flex flex-col items-center">
             <div className="w-64 h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-6">
@@ -75,9 +137,9 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
               <div className="flex space-x-2">
                 <input
                   type="text"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Enter Batch ID (e.g., BTH001)"
+                  value={scanInput}
+                  onChange={(e) => setScanInput(e.target.value)}
+                  placeholder="Enter Batch ID or paste QR content"
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <button
@@ -93,15 +155,14 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
 
         {/* Scan Results */}
         {scanResult === 'not-found' && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p className="text-red-800 font-medium">Batch not found</p>
-            <p className="text-red-600 text-sm">Please check the Batch ID and try again</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center mb-8">
+            <p className="text-red-800 font-medium">Product not found</p>
+            <p className="text-red-600 text-sm">Please check the code and try again</p>
           </div>
         )}
 
         {scannedBatch && scanResult === 'found' && (
-          <div className="space-y-6">
-            {/* Product Info */}
+          <div className="space-y-6 mb-8">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -114,7 +175,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                   <Calendar className="w-5 h-5 text-gray-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-600">Harvest Date</p>
@@ -136,83 +197,246 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                   <p className="font-semibold text-green-600">Grade A</p>
                 </div>
               </div>
+
+              {showBuyForm && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                  <button
+                    onClick={() => setShowBuyForm({
+                      ...showBuyForm,
+                      buyerName: 'Sarah Consumer',
+                      buyerProfession: 'Consumer',
+                      date: new Date().toISOString().split('T')[0],
+                      location: 'Oregon, USA'
+                    })}
+                    className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 flex items-center"
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Buy This Product
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Journey Timeline */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-6">Supply Chain Journey</h4>
-              
-              <div className="space-y-4">
-                {getJourneySteps(scannedBatch).map((step, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-lg mr-4">
-                      {step.icon}
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex items-center justify-between">
-                        <h5 className="font-semibold text-gray-900">{step.title}</h5>
-                        <span className="text-sm text-gray-500">
-                          {new Date(step.date).toLocaleDateString()}
-                        </span>
+            {scannedBatch.transfers && (
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <h4 className="text-lg font-semibold text-gray-900 mb-6">Supply Chain Journey</h4>
+                
+                <div className="space-y-4">
+                  {getJourneySteps(scannedBatch).map((step, index) => (
+                    <div key={index} className="flex items-start">
+                      <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-lg mr-4">
+                        {step.icon}
                       </div>
-                      <p className="text-gray-600">{step.description}</p>
-                      <p className="text-sm text-gray-500 flex items-center">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {step.location}
-                      </p>
+                      <div className="flex-grow">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-semibold text-gray-900">{step.title}</h5>
+                          <span className="text-sm text-gray-500">
+                            {new Date(step.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="text-gray-600">{step.description}</p>
+                        <p className="text-sm text-gray-500 flex items-center">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          {step.location}
+                        </p>
+                      </div>
+                      {index < getJourneySteps(scannedBatch).length - 1 && (
+                        <ArrowRight className="w-5 h-5 text-gray-400 ml-4" />
+                      )}
                     </div>
-                    {index < getJourneySteps(scannedBatch).length - 1 && (
-                      <ArrowRight className="w-5 h-5 text-gray-400 ml-4" />
-                    )}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+          </div>
+        )}
 
-            {/* Trust Indicators */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <h4 className="text-lg font-semibold text-green-900 mb-4">Trust Indicators</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center">
-                  <Shield className="w-5 h-5 text-green-600 mr-2" />
-                  <span className="text-green-800">Blockchain Verified</span>
+        {/* Purchase History */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Purchase History</h3>
+          
+          {purchases.length > 0 ? (
+            <div className="space-y-4">
+              {purchases.map((purchase) => (
+                <div key={purchase.id} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{purchase.product}</h4>
+                      <p className="text-sm text-gray-600">
+                        Batch: {purchase.batchId} | {purchase.quantity}kg | ${purchase.price}
+                      </p>
+                      <p className="text-sm text-gray-500">Purchased: {purchase.date}</p>
+                    </div>
+                    <button
+                      onClick={() => setShowJourneyModal(purchase)}
+                      className="text-blue-600 hover:text-blue-700 text-sm"
+                    >
+                      View Journey
+                    </button>
+                  </div>
+                  
+                  {purchase.feedback && (
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className={`w-4 h-4 ${star <= (purchase.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-600">({purchase.rating}/5)</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{purchase.feedback}</p>
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center">
-                  <Shield className="w-5 h-5 text-green-600 mr-2" />
-                  <span className="text-green-800">Organic Certified</span>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No purchases yet. Scan a product QR to make your first purchase.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Buy Form Modal */}
+        {showBuyForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <h3 className="text-lg font-semibold mb-4">Purchase Form</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Name</label>
+                    <input 
+                      type="text" 
+                      value={showBuyForm.buyerName} 
+                      disabled 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Profession</label>
+                    <input 
+                      type="text" 
+                      value={showBuyForm.buyerProfession} 
+                      disabled 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <Shield className="w-5 h-5 text-green-600 mr-2" />
-                  <span className="text-green-800">Farm Verified</span>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input 
+                      type="date" 
+                      value={showBuyForm.date} 
+                      disabled 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Product</label>
+                    <input 
+                      type="text" 
+                      value={showBuyForm.data?.cropType || scannedBatch?.cropType || 'Unknown'} 
+                      disabled 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <input 
+                    type="text" 
+                    value={showBuyForm.location} 
+                    disabled 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Quantity (kg)</label>
+                    <input 
+                      type="number" 
+                      value={buyForm.quantity}
+                      onChange={(e) => setBuyForm({...buyForm, quantity: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                      placeholder="Enter quantity"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                    <input 
+                      type="number" 
+                      step="0.01"
+                      value={buyForm.price}
+                      onChange={(e) => setBuyForm({...buyForm, price: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                      placeholder="Enter price"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button 
+                    onClick={handleBuy}
+                    disabled={!buyForm.quantity || !buyForm.price}
+                    className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  >
+                    Complete Purchase
+                  </button>
+                  <button 
+                    onClick={() => setShowBuyForm(null)}
+                    className="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Demo Batch IDs */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h4 className="font-semibold text-blue-900 mb-2">Demo Batch IDs</h4>
-          <p className="text-blue-800 text-sm mb-3">Try scanning these sample batch IDs:</p>
-          <div className="flex flex-wrap gap-2">
-            {['BTH001', 'BTH002'].map((id) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setSearchInput(id);
-                  const batch = getBatchById(id);
-                  if (batch) {
-                    setScannedBatch(batch);
-                    setScanResult('found');
-                  }
-                }}
-                className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
-              >
-                {id}
-              </button>
-            ))}
+        {/* Journey Modal */}
+        {showJourneyModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
+              <h3 className="text-lg font-semibold mb-4">Farm-to-Fork Journey: {showJourneyModal.product}</h3>
+              
+              <div className="space-y-4">
+                {showJourneyModal.journey.map((step: any, index: number) => (
+                  <div key={index} className="flex items-start">
+                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                      {step.stage?.toLowerCase().includes('farm') ? '🌱' : 
+                       step.stage?.toLowerCase().includes('distribution') ? '🚚' : '🏪'}
+                    </div>
+                    <div className="flex-grow">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-gray-900">{step.stage}</h4>
+                        <span className="text-sm text-gray-500">
+                          {new Date(step.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-600">{step.handler}</p>
+                      <p className="text-sm text-gray-500 flex items-center">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        {step.location}
+                      </p>
+                      <p className="text-sm text-gray-700 mt-1">{step.details}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg">Close</button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }
@@ -224,17 +448,83 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
         <p className="text-gray-600">Discover the story behind your food</p>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="flex items-center">
+            <div className="p-2 bg-orange-100 rounded-lg">
+              <ShoppingCart className="w-6 h-6 text-orange-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total Purchases</p>
+              <p className="text-2xl font-bold text-gray-900">{purchases.length}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="flex items-center">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Shield className="w-6 h-6 text-green-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Verified Products</p>
+              <p className="text-2xl font-bold text-gray-900">{purchases.length}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="flex items-center">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Star className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Avg Rating</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {purchases.filter(p => p.rating).length > 0 
+                  ? (purchases.reduce((sum, p) => sum + (p.rating || 0), 0) / purchases.filter(p => p.rating).length).toFixed(1)
+                  : 'N/A'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* QR Scanner */}
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Scan className="w-5 h-5 mr-2" />
+          QR Scanner
+        </h3>
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={scanInput}
+            onChange={(e) => setScanInput(e.target.value)}
+            placeholder="Enter Batch ID or paste QR content"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+          />
+          <button
+            onClick={handleScan}
+            className="bg-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors"
+          >
+            Scan
+          </button>
+        </div>
+      </div>
+
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer"
-             onClick={() => setSearchInput('')}>
+        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
           <div className="flex items-center mb-4">
             <div className="p-2 bg-orange-100 rounded-lg">
               <QrCode className="w-6 h-6 text-orange-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 ml-3">QR Scanner</h3>
+            <h3 className="text-lg font-semibold text-gray-900 ml-3">Product Scanner</h3>
           </div>
-          <p className="text-gray-600">Scan QR codes on food packages to trace their complete journey from farm to store.</p>
+          <p className="text-gray-600">Scan QR codes on food packages to trace their complete journey and make purchases.</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
@@ -255,40 +545,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             <h3 className="text-lg font-semibold text-gray-900 ml-3">Origin Tracking</h3>
           </div>
           <p className="text-gray-600">Know exactly where your food comes from and how it reached your table.</p>
-        </div>
-      </div>
-
-      {/* How to Use */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">How to Use the Scanner</h3>
-        </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-lg font-bold text-orange-600">1</span>
-              </div>
-              <h4 className="font-semibold mb-2">Find QR Code</h4>
-              <p className="text-gray-600 text-sm">Look for the QR code on food packaging or product labels</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-lg font-bold text-orange-600">2</span>
-              </div>
-              <h4 className="font-semibold mb-2">Scan or Enter ID</h4>
-              <p className="text-gray-600 text-sm">Use the scanner or manually enter the Batch ID</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-lg font-bold text-orange-600">3</span>
-              </div>
-              <h4 className="font-semibold mb-2">View Journey</h4>
-              <p className="text-gray-600 text-sm">Explore the complete supply chain journey and verify authenticity</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
