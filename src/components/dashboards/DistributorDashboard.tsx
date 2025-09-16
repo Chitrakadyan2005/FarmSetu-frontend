@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, CheckCircle, Clock, Scan, Eye, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Package, CheckCircle, Clock, Scan, Eye, ShoppingCart, TrendingUp, Search } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import QRCode from 'react-qr-code';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Plus, Calendar, DollarSign, TrendingUp, QrCode, Scan, Eye } from 'lucide-react';
+import { Package, Plus, Calendar, DollarSign, TrendingUp, QrCode, Scan, Eye, Search } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
 import QRCode from 'react-qr-code';
