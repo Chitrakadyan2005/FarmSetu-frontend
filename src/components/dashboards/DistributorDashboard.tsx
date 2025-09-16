@@ -299,24 +299,24 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
 
       {/* QR Scanner */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
-          <Scan className="w-5 h-5 mr-2" />
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <QrCode className="w-5 h-5 mr-2" />
           Product Scanner
         </h3>
-        <p className="text-gray-600 mb-4">Scan products to view their journey and purchase details</p>
+        <p className="text-gray-600 mb-4">Scan QR codes on food packages to trace their complete journey and make purchases.</p>
         <div className="flex space-x-2">
           <input
             type="text"
             value={scanInput}
             onChange={(e) => setScanInput(e.target.value)}
-            placeholder="Paste QR code content here..."
+            placeholder="Type Batch ID"
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <button
             onClick={handleScan}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors"
           >
-            Scan QR
+            <Search className="w-4 h-4" />
           </button>
         </div>
         
