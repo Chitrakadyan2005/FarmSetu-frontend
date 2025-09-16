@@ -242,8 +242,35 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
         </div>
       </div>
 
-      {/* QR Scanner */}
+      {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Plus className="w-5 h-5 text-green-600 mr-3" />
+            <span className="font-medium">Add New Batch</span>
+          </button>
+          
+          <button 
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Calendar className="w-5 h-5 text-blue-600 mr-3" />
+            <span className="font-medium">Schedule Harvest</span>
+          </button>
+          
+          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <TrendingUp className="w-5 h-5 text-purple-600 mr-3" />
+            <span className="font-medium">View Analytics</span>
+          </button>
+        </div>
+      </div>
+
+      {/* QR Scanner */}
+      <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <Scan className="w-5 h-5 mr-2" />
           QR Scanner
@@ -274,61 +301,6 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             )}
           </div>
         )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Plus className="w-5 h-5 text-green-600 mr-3" />
-            <span className="font-medium">Add New Batch</span>
-          </button>
-          
-          <button 
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Calendar className="w-5 h-5 text-blue-600 mr-3" />
-            <span className="font-medium">Schedule Harvest</span>
-          </button>
-          
-          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-            <TrendingUp className="w-5 h-5 text-purple-600 mr-3" />
-            <span className="font-medium">View Analytics</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Recent Batches */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Batches</h3>
-        </div>
-        <div className="p-6">
-          {userBatches.slice(0, 3).map((batch) => (
-            <div key={batch.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-              <div>
-                <p className="font-medium text-gray-900">{batch.cropType}</p>
-                <p className="text-sm text-gray-600">Batch ID: {batch.id}</p>
-              </div>
-              <div className="text-right">
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
-                  {batch.status}
-                </span>
-                <p className="text-sm text-gray-600 mt-1">{batch.quantity} kg</p>
-              </div>
-            </div>
-          ))}
-          {userBatches.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No batches yet. Create your first batch to get started.</p>
-            </div>
-          )}
-        </div>
       </div>
 
       {showAddForm && (

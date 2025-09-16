@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import QRCode from 'react-qr-code';
-import { Download, QrCode, User, MapPin, Phone, Store, Package } from 'lucide-react';
+import { Download, QrCode, User, MapPin, Phone, Store, Package, Truck } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface DistributorProfileData {
@@ -9,7 +9,7 @@ interface DistributorProfileData {
   businessName: string;
   location: string;
   contact: string;
-  produceHandled: string[];
+  transfersHandled: string[];
   stockUnits: number;
   connectedFarmers: string[];
 }
@@ -21,7 +21,7 @@ const DistributorProfile: React.FC = () => {
     businessName: 'Green Valley Distributors',
     location: 'Nevada, USA',
     contact: '+1 555-0202',
-    produceHandled: ['Tomatoes', 'Carrots'],
+    transfersHandled: ['Organic Tomatoes', 'Fresh Carrots', 'Bell Peppers', 'Organic Lettuce'],
     stockUnits: 320,
     connectedFarmers: ['John Farmer']
   });
@@ -106,6 +106,19 @@ const DistributorProfile: React.FC = () => {
                 <label className="block text-sm text-gray-600 mb-1 flex items-center"><Package className="w-4 h-4 mr-2"/>Stock (units)</label>
                 <input type="number" className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.stockUnits} onChange={(e) => handleUpdate({ stockUnits: Number(e.target.value || 0) })}/>
               </div>
+            </div>
+          </div>
+
+          {/* Transfers Handled */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Products Transferred</h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.transfersHandled.map((product, idx) => (
+                <span key={idx} className="inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <Truck className="w-4 h-4 mr-1"/>
+                  {product}
+                </span>
+              ))}
             </div>
           </div>
         </div>

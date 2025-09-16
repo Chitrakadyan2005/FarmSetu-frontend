@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, CheckCircle, Clock, Scan, Eye, ShoppingCart } from 'lucide-react';
+import { Package, CheckCircle, Clock, Scan, Eye, ShoppingCart, TrendingUp } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import QRCode from 'react-qr-code';
 
@@ -273,6 +273,27 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
         </div>
       </div>
 
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <CheckCircle className="w-5 h-5 text-green-600 mr-3" />
+            <span className="font-medium">Approve Transfer Requests</span>
+          </button>
+          
+          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <TrendingUp className="w-5 h-5 text-purple-600 mr-3" />
+            <span className="font-medium">View Analytics</span>
+          </button>
+          
+          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <Package className="w-5 h-5 text-blue-600 mr-3" />
+            <span className="font-medium">Manage Inventory</span>
+          </button>
+        </div>
+      </div>
+
       {/* QR Scanner */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -327,7 +348,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
           </div>
         )}
       </div>
-
       {/* Buy Form Modal */}
       {showBuyForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

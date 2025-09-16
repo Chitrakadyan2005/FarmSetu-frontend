@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star } from 'lucide-react';
+import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
 
@@ -28,6 +28,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
   const [showBuyForm, setShowBuyForm] = useState<any>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [showJourneyModal, setShowJourneyModal] = useState<Purchase | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
   
   const [buyForm, setBuyForm] = useState({
     quantity: '',
@@ -114,37 +115,67 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
     return steps;
   };
 
+  const openCamera = () => {
+    setShowCamera(true);
+    // In a real app, this would open the device camera
+    // For demo purposes, we'll simulate camera opening
+    setTimeout(() => {
+      alert('Camera would open here in a real app. For demo, please use the input field.');
+      setShowCamera(false);
+    }, 1000);
+  };
+
   if (currentPage === 'scanner') {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Scanner & Purchase History</h2>
-          <p className="text-gray-600">Scan products and view your purchase history</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Scanner</h2>
+          <p className="text-gray-600">Scan products to view their journey and make purchases</p>
         </div>
 
         {/* Scanner */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <div className="flex flex-col items-center">
-            <div className="w-64 h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-6">
-              <div className="text-center">
-                <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">QR Scanner Viewport</p>
-                <p className="text-sm text-gray-500">Use input below for demo</p>
+            {showCamera ? (
+              <div className="w-64 h-64 bg-black rounded-lg flex items-center justify-center mb-6">
+                <div className="text-center text-white">
+                  <Camera className="w-16 h-16 mx-auto mb-4" />
+                  <p>Opening Camera...</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="w-64 h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-6">
+                <div className="text-center">
+                  <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">QR Scanner Viewport</p>
+                  <p className="text-sm text-gray-500">Click scan to open camera</p>
+                </div>
+              </div>
+            )}
 
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md space-y-4">
+              <div className="flex space-x-2">
+                <button
+                  onClick={openCamera}
+                  className="bg-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Scan
+                </button>
+                <span className="flex items-center text-gray-500 px-3">OR</span>
+              </div>
+              
               <div className="flex space-x-2">
                 <input
                   type="text"
                   value={scanInput}
                   onChange={(e) => setScanInput(e.target.value)}
-                  placeholder="Enter Batch ID or paste QR content"
+                  placeholder="Type Batch ID or paste QR content"
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <button
                   onClick={handleScan}
-                  className="bg-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors"
+                  className="bg-gray-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors"
                 >
                   <Search className="w-4 h-4" />
                 </button>
@@ -498,19 +529,27 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
           <Scan className="w-5 h-5 mr-2" />
           QR Scanner
         </h3>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 items-center">
+          <button
+            onClick={openCamera}
+            className="bg-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center"
+          >
+            <Camera className="w-4 h-4 mr-2" />
+            Scan
+          </button>
+          <span className="text-gray-500">OR</span>
           <input
             type="text"
             value={scanInput}
             onChange={(e) => setScanInput(e.target.value)}
-            placeholder="Enter Batch ID or paste QR content"
+            placeholder="Type Batch ID"
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
           <button
             onClick={handleScan}
-            className="bg-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors"
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors"
           >
-            Scan
+            <Search className="w-4 h-4" />
           </button>
         </div>
       </div>
