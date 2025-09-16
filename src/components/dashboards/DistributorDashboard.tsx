@@ -300,11 +300,22 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
       {/* QR Scanner */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <QrCode className="w-5 h-5 mr-2" />
+          <Scan className="w-5 h-5 mr-2" />
           Product Scanner
         </h3>
         <p className="text-gray-600 mb-4">Scan QR codes on food packages to trace their complete journey and make purchases.</p>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 items-center">
+          <button
+            onClick={() => {
+              // In a real app, this would open the device camera
+              alert('Camera would open here in a real app. For demo, please use the input field.');
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center"
+          >
+            <Scan className="w-4 h-4 mr-2" />
+            Scan
+          </button>
+          <span className="text-gray-500">OR</span>
           <input
             type="text"
             value={scanInput}
