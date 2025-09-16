@@ -99,7 +99,10 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
   if (currentPage === 'transfers') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Procured Batches</h2>
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Procured Batches</h2>
+          <p className="text-gray-600">Manage your inventory and transfers</p>
+        </div>
 
         <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
           <div className="px-6 py-4 border-b border-gray-200">

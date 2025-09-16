@@ -65,8 +65,12 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
   if (currentPage === 'batches') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900">My Batches</h2>
+          <p className="text-gray-600">Manage your crop batches and track their journey</p>
+        </div>
+
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => setShowAddForm(true)}
             className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center"

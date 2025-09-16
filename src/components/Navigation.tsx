@@ -29,7 +29,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate }) => {
       case 'consumer':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: Home },
-          { id: 'scanner', label: 'Scanner & Purchases', icon: ShoppingCart },
+          { id: 'scanner', label: 'My Purchases', icon: ShoppingCart },
           { id: 'profile', label: 'Profile', icon: UserIcon }
         ];
       case 'regulator':
