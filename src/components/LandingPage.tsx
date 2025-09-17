@@ -9,33 +9,51 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
-      <header className="relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
-              <span className="text-green-600">FarmSetu</span>
-              <br />
-              <span className="text-3xl sm:text-4xl">Transparent Food Supply</span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Track your food from farm to fork with blockchain technology. 
-              Ensuring transparency, authenticity, and trust in every bite.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => onNavigate('login')}
-                className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center"
-              >
-                Get Started
-                <ChevronRight className="ml-2 w-5 h-5" />
-              </button>
-              <button className="border border-green-600 text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-                Learn More
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <header
+  className="relative bg-cover bg-center min-h-[90vh]"
+  style={{ backgroundImage: "url('../landingpage/wallpaper.jpg')" }}
+>
+  {/* Overlay for better readability */}
+  <div className="absolute inset-0 bg-black/10"></div>
+
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div className="text-center text-white">
+      
+      {/* Logo */}
+      <img 
+        src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/e729fb74-4401-4bed-8c19-fc292200680a.png" 
+        alt="FarmSetu Logo" 
+        className="mx-auto mb-6 w-24 sm:w-32" 
+      />
+
+      <h1 className="text-4xl sm:text-6xl font-bold mb-6">
+        <span className="text-green-800">FarmSetu</span>
+        <br />
+        <span className="text-3xl sm:text-4xl">Transparent Food Supply</span>
+      </h1>
+      
+      <p className="text-xl mb-8 max-w-3xl mx-auto">
+        Track your food from farm to fork with blockchain technology.
+        Ensuring transparency, authenticity, and trust in every bite.
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <button
+          onClick={() => onNavigate("login")}
+          className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center"
+        >
+          Get Started
+          <ChevronRight className="ml-2 w-5 h-5" />
+        </button>
+        <button className="border border-green-400 text-green-400 px-8 py-4 rounded-lg font-semibold hover:bg-green-50/20 transition-colors">
+          Learn More
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+
 
       {/* How It Works Section */}
       <section className="py-16 bg-white">

@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
-import { Package, CheckCircle, Clock, Scan, Eye, ShoppingCart, TrendingUp, Search } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  Package,
+  Plus,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  QrCode,
+  Scan,
+  Eye,
+  Search,
+  CheckCircle,
+  Clock,
+  ShoppingCart
+} from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import AddBatchForm from '../forms/AddBatchForm';
 import QRCode from 'react-qr-code';
 
 interface DistributorDashboardProps {
@@ -51,9 +66,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
       const data = JSON.parse(scanInput);
       setScanResult(data);
       
-      // If it's a batch QR, show buy button
       if (data.type === 'farmer-batch' || data.type === 'distributor-batch') {
-        // Auto-fill form data
         setShowBuyForm({
           ...data,
           buyerName: 'Mike Distributor',
@@ -86,7 +99,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
     setShowBuyForm(null);
     setBuyForm({ quantity: '', price: '' });
     
-    // Simulate blockchain entry
     console.log('Blockchain entry created:', request);
   };
 
@@ -111,35 +123,19 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Batch ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Crop Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Current Owner
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Owner</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {availableBatches.map((batch) => (
+              {availableBatches.map((batch: any) => (
                 <tr key={batch.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {batch.id}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {batch.cropType}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {batch.currentOwner}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{batch.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{batch.cropType}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{batch.currentOwner}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                       {batch.status}
@@ -159,7 +155,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
           </table>
         </div>
 
-        {/* Purchase Requests */}
         {purchaseRequests.length > 0 && (
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
@@ -171,12 +166,8 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-gray-900">Batch: {request.batchId}</p>
-                      <p className="text-sm text-gray-600">
-                        Buyer: {request.buyerName} ({request.buyerProfession})
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Quantity: {request.quantity}kg | Price: ${request.price}
-                      </p>
+                      <p className="text-sm text-gray-600">Buyer: {request.buyerName} ({request.buyerProfession})</p>
+                      <p className="text-sm text-gray-600">Quantity: {request.quantity}kg | Price: ${request.price}</p>
                       <p className="text-sm text-gray-500">Date: {request.date}</p>
                     </div>
                     <div className="flex gap-2">
@@ -255,7 +246,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Completed Transfers</p>
               <p className="text-2xl font-bold text-gray-900">
-                {batches.reduce((count, batch) => count + batch.transfers.length, 0)}
+                {batches.reduce((count: number, batch: any) => count + batch.transfers.length, 0)}
               </p>
             </div>
           </div>
@@ -307,7 +298,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
         <div className="flex space-x-2 items-center">
           <button
             onClick={() => {
-              // In a real app, this would open the device camera
               alert('Camera would open here in a real app. For demo, please use the input field.');
             }}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center"
@@ -363,6 +353,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
           </div>
         )}
       </div>
+
       {/* Buy Form Modal */}
       {showBuyForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

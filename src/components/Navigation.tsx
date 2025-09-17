@@ -49,10 +49,19 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate }) => {
     <nav className="bg-white shadow-lg border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          
+          {/* Logo + Brand */}
           <div className="flex items-center space-x-8">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 flex items-center space-x-2">
+              <img
+                src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/e729fb74-4401-4bed-8c19-fc292200680a.png" // replace with your actual logo link
+                alt="FarmSetu Logo"
+                className="h-8 w-8 object-contain"
+              />
               <h1 className="text-xl font-bold text-green-600">FarmSetu</h1>
             </div>
+
+            {/* Desktop nav items */}
             <div className="hidden md:flex space-x-4">
               {navItems.map((item) => {
                 const IconComponent = item.icon;
@@ -74,6 +83,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate }) => {
             </div>
           </div>
           
+          {/* User info + Logout */}
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">
               Welcome, {user.name} ({user.role})
