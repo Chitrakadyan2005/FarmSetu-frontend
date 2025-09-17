@@ -15,9 +15,12 @@ import RegulatorProfile from './components/profiles/RegulatorProfile';
 function AppContent() {
   const { user } = useApp();
   const [currentPage, setCurrentPage] = useState('home');
+  const [pageKey, setPageKey] = useState(0);
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
+    // Force re-render with new key to trigger animations
+    setPageKey(prev => prev + 1);
   };
 
   const renderDashboard = () => {
@@ -39,13 +42,13 @@ function AppContent() {
 
     switch (user.role) {
       case 'farmer':
-        return <FarmerDashboard currentPage={currentPage} />;
+        return <FarmerDashboard key={pageKey} currentPage={currentPage} />;
       case 'distributor':
-        return <DistributorDashboard currentPage={currentPage} />;
+        return <DistributorDashboard key={pageKey} currentPage={currentPage} />;
       case 'consumer':
-        return <ConsumerDashboard currentPage={currentPage} />;
+        return <ConsumerDashboard key={pageKey} currentPage={currentPage} />;
       case 'regulator':
-        return <RegulatorDashboard currentPage={currentPage} />;
+        return <RegulatorDashboard key={pageKey} currentPage={currentPage} />;
       default:
         return null;
     }

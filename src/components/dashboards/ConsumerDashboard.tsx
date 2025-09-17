@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
@@ -127,7 +128,12 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
 
   if (currentPage === 'scanner') {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h2>
           <p className="text-gray-600">View your purchase history and product journeys</p>
@@ -216,12 +222,17 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+    >
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900">Consumer Dashboard</h2>
         <p className="text-gray-600">Discover the story behind your food</p>
@@ -229,7 +240,12 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
             <div className="p-2 bg-orange-100 rounded-lg">
               <ShoppingCart className="w-6 h-6 text-orange-600" />
@@ -239,9 +255,14 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
               <p className="text-2xl font-bold text-gray-900">{purchases.length}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
               <Shield className="w-6 h-6 text-green-600" />
@@ -251,9 +272,14 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
               <p className="text-2xl font-bold text-gray-900">{purchases.length}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Star className="w-6 h-6 text-blue-600" />
@@ -268,11 +294,16 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* QR Scanner */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="bg-white rounded-lg shadow p-6 mb-8"
+      >
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <QrCode className="w-5 h-5 mr-2" />
           Product Scanner
@@ -301,11 +332,17 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             <Search className="w-4 h-4" />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+          whileHover={{ scale: 1.02 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center mb-4">
             <div className="p-2 bg-orange-100 rounded-lg">
               <QrCode className="w-6 h-6 text-orange-600" />
@@ -313,9 +350,15 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             <h3 className="text-lg font-semibold text-gray-900 ml-3">Product Scanner</h3>
           </div>
           <p className="text-gray-600">Scan QR codes on food packages to trace their complete journey and make purchases.</p>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+          whileHover={{ scale: 1.02 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center mb-4">
             <div className="p-2 bg-green-100 rounded-lg">
               <Shield className="w-6 h-6 text-green-600" />
@@ -323,9 +366,15 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             <h3 className="text-lg font-semibold text-gray-900 ml-3">Authenticity</h3>
           </div>
           <p className="text-gray-600">Verify the authenticity and quality of organic and premium food products.</p>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.7 }}
+          whileHover={{ scale: 1.02 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center mb-4">
             <div className="p-2 bg-blue-100 rounded-lg">
               <MapPin className="w-6 h-6 text-blue-600" />
@@ -333,9 +382,9 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             <h3 className="text-lg font-semibold text-gray-900 ml-3">Origin Tracking</h3>
           </div>
           <p className="text-gray-600">Know exactly where your food comes from and how it reached your table.</p>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
