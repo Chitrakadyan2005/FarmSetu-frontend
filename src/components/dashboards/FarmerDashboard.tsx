@@ -155,6 +155,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             </div>
           )}
         </div>
+        </div>
 
         {/* Add Batch Modal */}
         {showAddForm && (
@@ -222,7 +223,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
       <h2 className="text-3xl font-bold text-gray-900 mb-2">
         Welcome back, {user?.name}! 🌱
       </h2>
-      <p className="text-gray-600 mb-8">Here’s an overview of your farm activity.</p>
+      <p className="text-gray-600 mb-8">Here's an overview of your farm activity.</p>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -383,9 +384,6 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
         >
           <div
             className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-lg"
-           className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
-            className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
-            className="bg-white rounded-lg max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
