@@ -60,9 +60,15 @@ function AppContent() {
         case 'login':
           return <LoginPage onNavigate={handleNavigate} />;
         case 'home':
+          return <LandingPage onNavigate={handleNavigate} />;
         default:
           return <LandingPage onNavigate={handleNavigate} />;
       }
+    }
+
+    // If user is logged in but navigates to 'home', show landing page
+    if (currentPage === 'home') {
+      return <LandingPage onNavigate={handleNavigate} />;
     }
 
     return renderDashboard();
