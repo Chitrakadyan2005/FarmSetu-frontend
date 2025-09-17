@@ -110,7 +110,12 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
 
   if (currentPage === 'transfers') {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900">Procured Batches</h2>
           <p className="text-gray-600">Manage your inventory and transfers</p>
@@ -213,7 +218,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </motion.div>
     );
   }
