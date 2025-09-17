@@ -59,6 +59,7 @@ function AppContent() {
       switch (currentPage) {
         case 'login':
           return <LoginPage onNavigate={handleNavigate} />;
+        case 'home':
         default:
           return <LandingPage onNavigate={handleNavigate} />;
       }
