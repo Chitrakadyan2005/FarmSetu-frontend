@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { motion } from 'framer-motion';
 import {
   Package,
   Plus,
@@ -221,11 +220,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-    >
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
