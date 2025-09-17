@@ -6,17 +6,24 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+  const scrollToHowItWorks = () => {
+    const howItWorksSection = document.getElementById('how-it-works');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
       <header
-  className="relative bg-cover bg-center min-h-[90vh]"
+  className="relative bg-cover bg-center h-screen"
   style={{ backgroundImage: "url('../landingpage/wallpaper.jpg')" }}
 >
   {/* Overlay for better readability */}
   <div className="absolute inset-0 bg-black/10"></div>
 
-  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
     <div className="text-center text-white">
       
       {/* Logo */}
@@ -45,7 +52,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           Get Started
           <ChevronRight className="ml-2 w-5 h-5" />
         </button>
-        <button className="border border-green-400 text-green-400 px-8 py-4 rounded-lg font-semibold hover:bg-green-50/20 transition-colors">
+        <button 
+          onClick={scrollToHowItWorks}
+          className="border border-green-400 text-green-400 px-8 py-4 rounded-lg font-semibold hover:bg-green-50/20 transition-colors"
+        >
           Learn More
         </button>
       </div>
@@ -56,7 +66,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
 
       {/* How It Works Section */}
-      <section className="py-16 bg-white">
+      <section id="how-it-works" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
