@@ -219,7 +219,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
           </div>
         )}
       </motion.div>
-    </motion.div>
     );
   }
 
