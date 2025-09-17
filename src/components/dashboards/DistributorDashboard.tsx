@@ -110,7 +110,12 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
 
   if (currentPage === 'transfers') {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900">Procured Batches</h2>
           <p className="text-gray-600">Manage your inventory and transfers</p>
@@ -213,12 +218,17 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+    >
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900">Distributor Dashboard</h2>
         <p className="text-gray-600">Manage supply chain transfers and logistics</p>
@@ -226,7 +236,12 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Package className="w-6 h-6 text-blue-600" />
@@ -236,9 +251,14 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
               <p className="text-2xl font-bold text-gray-900">{availableBatches.length}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
               <CheckCircle className="w-6 h-6 text-green-600" />
@@ -250,9 +270,14 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg">
               <Clock className="w-6 h-6 text-yellow-600" />
@@ -264,32 +289,51 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="bg-white rounded-lg shadow p-6 mb-8"
+      >
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <CheckCircle className="w-5 h-5 text-green-600 mr-3" />
             <span className="font-medium">Approve Transfer Requests</span>
-          </button>
+          </motion.button>
           
-          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <TrendingUp className="w-5 h-5 text-purple-600 mr-3" />
             <span className="font-medium">View Analytics</span>
-          </button>
+          </motion.button>
           
-          <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <Package className="w-5 h-5 text-blue-600 mr-3" />
             <span className="font-medium">Manage Inventory</span>
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       {/* QR Scanner */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        className="bg-white rounded-lg shadow p-6 mb-8"
+      >
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <Scan className="w-5 h-5 mr-2" />
           Product Scanner
@@ -352,7 +396,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
             )}
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Buy Form Modal */}
       {showBuyForm && (
@@ -455,7 +499,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

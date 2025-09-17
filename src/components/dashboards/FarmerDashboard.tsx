@@ -97,6 +97,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
         </div>
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -153,6 +154,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
               </button>
             </div>
           )}
+        </div>
         </div>
 
         {/* Add Batch Modal */}
@@ -221,13 +223,18 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
       <h2 className="text-3xl font-bold text-gray-900 mb-2">
         Welcome back, {user?.name}! 🌱
       </h2>
-      <p className="text-gray-600 mb-8">Here’s an overview of your farm activity.</p>
+      <p className="text-gray-600 mb-8">Here's an overview of your farm activity.</p>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <motion.div whileHover={{ scale: 1.05 }} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg">
+            <div className="p-2 bg-green-100 rounded-lg">
               <Package className="w-6 h-6 text-green-600" />
             </div>
             <div className="ml-4">
@@ -237,9 +244,14 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
           </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.05 }} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-lg">
+            <div className="p-2 bg-blue-100 rounded-lg">
               <TrendingUp className="w-6 h-6 text-blue-600" />
             </div>
             <div className="ml-4">
@@ -251,9 +263,14 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
           </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.05 }} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
           <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg">
+            <div className="p-2 bg-green-100 rounded-lg">
               <DollarSign className="w-6 h-6 text-green-600" />
             </div>
             <div className="ml-4">
@@ -267,11 +284,16 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow p-6 mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="bg-white rounded-lg shadow p-6 mb-8"
+      >
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }}
             onClick={() => setShowAddForm(true)}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors"
           >
@@ -280,7 +302,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }}
             onClick={() => setShowAddForm(true)}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors"
           >
@@ -289,17 +311,22 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 transition-colors"
           >
             <TrendingUp className="w-5 h-5 text-purple-600 mr-3" />
             <span className="font-medium">View Analytics</span>
           </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       {/* QR Scanner */}
-      <div className="bg-white rounded-xl shadow p-6 mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        className="bg-white rounded-lg shadow p-6 mb-8"
+      >
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <QrCode className="w-5 h-5 mr-2" />
           Product Scanner
@@ -347,7 +374,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             )}
           </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {/* Add Batch Modal (Dashboard quick actions) */}
       {showAddForm && (
