@@ -40,35 +40,28 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
       <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ 
         fontFamily: "'Poppins', sans-serif", 
-        textShadow: '3px 3px 6px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
+        textShadow: '0 4px 8px rgba(0,0,0,0.3)',
         letterSpacing: '-0.02em',
         fontWeight: '800'
       }}>
-        <span className="text-green-300 drop-shadow-2xl" style={{ 
-          background: 'linear-gradient(135deg, #86efac 0%, #22c55e 50%, #16a34a 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.4))'
+        <span className="text-green-400" style={{ 
+          textShadow: '0 4px 8px rgba(0,0,0,0.4)'
         }}>FarmSetu</span>
         <br />
-        <span className="text-3xl sm:text-4xl text-white drop-shadow-2xl" style={{ 
+        <span className="text-3xl sm:text-4xl text-white" style={{ 
           fontFamily: "'Montserrat', sans-serif", 
-          fontWeight: '300', 
           fontWeight: '200', 
           letterSpacing: '0.08em',
-          textShadow: '2px 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.6)',
-          filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.1))'
+          textShadow: '0 4px 8px rgba(0,0,0,0.5)'
         }}>Linking Farm to Fork</span>
       </h1>
       
-      <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50 drop-shadow-lg" style={{ 
+      <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50" style={{ 
         fontFamily: "'Crimson Text', serif", 
         fontWeight: '300', 
         lineHeight: '1.8',
         letterSpacing: '0.01em',
-        textShadow: '2px 2px 6px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.5)',
-        filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.1))'
+        textShadow: '0 2px 4px rgba(0,0,0,0.6)'
       }}>
         Track your food from farm to fork with blockchain technology.
         Ensuring transparency, authenticity, and trust in every bite.
