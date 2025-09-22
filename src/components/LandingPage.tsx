@@ -39,9 +39,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       />
 
       <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ 
-        fontFamily: "'Playfair Display', serif", 
+        fontFamily: "'Poppins', sans-serif", 
         textShadow: '3px 3px 6px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
-        letterSpacing: '0.02em'
+        letterSpacing: '-0.02em',
+        fontWeight: '800'
       }}>
         <span className="text-green-300 drop-shadow-2xl" style={{ 
           background: 'linear-gradient(135deg, #86efac 0%, #22c55e 50%, #16a34a 100%)',
@@ -52,7 +53,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         }}>Linking Farm to Fork</span>
         <br />
         <span className="text-3xl sm:text-4xl text-white drop-shadow-2xl" style={{ 
-          fontFamily: "'Inter', sans-serif", 
+          fontFamily: "'Montserrat', sans-serif", 
+          fontWeight: '300', 
           fontWeight: '200', 
           letterSpacing: '0.08em',
           textShadow: '2px 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.6)',
@@ -61,9 +63,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       </h1>
       
       <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50 drop-shadow-lg" style={{ 
-        fontFamily: "'Inter', sans-serif", 
+        fontFamily: "'Crimson Text', serif", 
         fontWeight: '300', 
-        lineHeight: '1.7',
+        lineHeight: '1.8',
         letterSpacing: '0.01em',
         textShadow: '2px 2px 6px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.5)',
         filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.1))'
@@ -77,7 +79,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           onClick={() => onNavigate("login")}
           className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-500"
           style={{ 
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Poppins', sans-serif",
             backdropFilter: 'blur(10px)',
             background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(22, 163, 74, 0.9) 100%)',
             boxShadow: '0 8px 32px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
@@ -90,9 +92,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           onClick={scrollToHowItWorks}
           className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           style={{ 
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Poppins', sans-serif",
             backdropFilter: 'blur(10px)',
-            background: 'rgba(255, 255, 255, 0.1)',
+            background: 'transparent',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
           }}
         >
