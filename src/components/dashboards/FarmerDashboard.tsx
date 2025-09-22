@@ -10,9 +10,7 @@ import {
   Scan,
   Eye,
   Search,
-  Brain,
-  ChevronDown,
-  MapPin
+  Brain
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
@@ -31,8 +29,6 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
   const [scanInput, setScanInput] = useState('');
   const [scanResult, setScanResult] = useState<any>(null);
   const [selectedBatchInsights, setSelectedBatchInsights] = useState<any>(null);
-  const [showJourneyModal, setShowJourneyModal] = useState<any>(null);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const userBatches = batches.filter(batch => batch.farmerId === user?.id);
 
@@ -81,32 +77,6 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
     }
   };
 
-  const getJourneySteps = (batch: any) => {
-    const steps = [
-      {
-        title: 'Farm Origin',
-        description: batch.farmerName,
-        location: batch.location,
-        date: batch.harvestDate,
-        icon: '🌱',
-        status: 'completed'
-      }
-    ];
-
-    batch.transfers?.forEach((transfer: any, index: number) => {
-      steps.push({
-        title: `Transfer ${index + 1}`,
-        description: transfer.to,
-        location: transfer.location,
-        date: transfer.timestamp,
-        icon: index === batch.transfers.length - 1 ? '🏪' : '🚚',
-        status: 'completed'
-      });
-    });
-
-    return steps;
-  };
-
   if (currentPage === 'batches') {
     return (
       <motion.div
@@ -144,11 +114,13 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {userBatches.map((batch) => {
+                const insights = generateMLInsights(batch);
                 return (
                   <motion.tr
                     key={batch.id}
@@ -168,51 +140,30 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="relative">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
+                        insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        Grade {insights.quality.grade}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      <div className="flex space-x-2">
                         <button
-                          onClick={() => setActiveDropdown(activeDropdown === batch.id ? null : batch.id)}
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          onClick={() => setShowQRModal(batch)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
                         >
-                          View Actions
-                          <ChevronDown className="w-4 h-4 ml-2" />
+                          <Eye className="w-4 h-4 mr-1" />
+                          QR
                         </button>
-                        
-                        {activeDropdown === batch.id && (
-                          <div className="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                            <div className="py-1">
-                              <button
-                                onClick={() => {
-                                  setShowJourneyModal(batch);
-                                  setActiveDropdown(null);
-                                }}
-                                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              >
-                                <MapPin className="w-4 h-4 mr-2" />
-                                View Journey So Far
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setShowQRModal(batch);
-                                  setActiveDropdown(null);
-                                }}
-                                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              >
-                                <QrCode className="w-4 h-4 mr-2" />
-                                QR Code
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setSelectedBatchInsights(batch);
-                                  setActiveDropdown(null);
-                                }}
-                                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              >
-                                <Brain className="w-4 h-4 mr-2" />
-                                ML Insights
-                              </button>
-                            </div>
-                          </div>
-                        )}
+                        <button
+                          onClick={() => setSelectedBatchInsights(batch)}
+                          className="text-purple-600 hover:text-purple-800 font-medium flex items-center hover:underline"
+                        >
+                          <Brain className="w-4 h-4 mr-1" />
+                          Insights
+                        </button>
                       </div>
                     </td>
                   </motion.tr>
@@ -311,9 +262,9 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                   </button>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Batch Info */}
-                  <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="font-semibold text-gray-900 mb-3">Batch Details</h4>
                     <div className="space-y-2 text-sm">
                       <p><span className="font-medium">Crop:</span> {selectedBatchInsights.cropType}</p>
@@ -324,66 +275,26 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                   </div>
                   
                   {/* ML Insights */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-                    <div className="flex items-center mb-4">
-                      <Brain className="w-5 h-5 text-blue-600 mr-2" />
-                      <h4 className="font-semibold text-blue-900">ML Analysis Results</h4>
+                  <MLInsightsPanel insights={generateMLInsights(selectedBatchInsights)} />
+                </div>
+                
+                {/* Detailed Analysis */}
+                <div className="mt-6 bg-blue-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-900 mb-3">Detailed Analysis</h4>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-medium text-blue-800">Quality Factors:</span>
+                      <ul className="list-disc list-inside text-blue-700 mt-1">
+                        {generateMLInsights(selectedBatchInsights).quality.factors.map((factor, idx) => (
+                          <li key={idx}>{factor}</li>
+                        ))}
+                      </ul>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {(() => {
-                        const insights = generateMLInsights(selectedBatchInsights);
-                        return (
-                          <>
-                            {/* Quality Grade */}
-                            <div className="bg-white rounded-lg p-4 shadow-sm">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">Predicted Grade</span>
-                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                  insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
-                                  insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  Grade {insights.quality.grade}
-                                </span>
-                              </div>
-                              <div className="text-xs text-gray-600">
-                                {Math.round(insights.quality.confidence * 100)}% confidence
-                              </div>
-                            </div>
-
-                            {/* Suggested Price */}
-                            <div className="bg-white rounded-lg p-4 shadow-sm">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">Suggested Price</span>
-                                <span className="text-sm font-semibold text-green-600">
-                                  ${insights.pricing.suggestedPrice}/kg
-                                </span>
-                              </div>
-                              <div className="text-xs text-gray-600">
-                                Range: ${insights.pricing.priceRange.min} - ${insights.pricing.priceRange.max}
-                              </div>
-                            </div>
-
-                            {/* Fraud Detection */}
-                            <div className="bg-white rounded-lg p-4 shadow-sm">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">Fraud Detection</span>
-                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                  insights.fraud.riskLevel === 'low' ? 'bg-green-100 text-green-800' :
-                                  insights.fraud.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  {insights.fraud.riskLevel.toUpperCase()} RISK
-                                </span>
-                              </div>
-                              <div className="text-xs text-gray-600">
-                                {insights.fraud.flags[0]}
-                              </div>
-                            </div>
-                          </>
-                        );
-                      })()}
+                    <div>
+                      <span className="font-medium text-blue-800">Fraud Assessment:</span>
+                      <p className="text-blue-700 mt-1">
+                        {generateMLInsights(selectedBatchInsights).fraud.recommendation}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -395,43 +306,6 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                   Close
                 </button>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Journey Modal */}
-        {showJourneyModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <MapPin className="w-5 h-5 mr-2 text-blue-600" />
-                Journey So Far: {showJourneyModal.cropType}
-              </h3>
-              
-              <div className="space-y-4">
-                {getJourneySteps(showJourneyModal).map((step: any, index: number) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
-                      {step.icon}
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-gray-900">{step.title}</h4>
-                        <span className="text-sm text-gray-500">
-                          {new Date(step.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-gray-600">{step.description}</p>
-                      <p className="text-sm text-gray-500 flex items-center">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {step.location}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Close</button>
             </div>
           </div>
         )}

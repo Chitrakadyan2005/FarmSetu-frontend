@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye, Brain, ChevronDown } from 'lucide-react';
+import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye, Brain } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
 import MLInsightsPanel from '../insights/MLInsightsPanel';
@@ -123,9 +123,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
   const [purchases, setPurchases] = useState<Purchase[]>(dummyPurchases);
   const [showJourneyModal, setShowJourneyModal] = useState<Purchase | null>(null);
   const [showCamera, setShowCamera] = useState(false);
-  
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [selectedPurchaseInsights, setSelectedPurchaseInsights] = useState<Purchase | null>(null);
   
   const [buyForm, setBuyForm] = useState({
     quantity: '',
@@ -253,6 +250,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -286,58 +284,21 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="relative">
-                          <button
-                            onClick={() => setActiveDropdown(activeDropdown === purchase.id ? null : purchase.id)}
-                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            View Actions
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </button>
-                          
-                          {activeDropdown === purchase.id && (
-                            <div className="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                              <div className="py-1">
-                                <button
-                                  onClick={() => {
-                                    setShowJourneyModal(purchase);
-                                    setActiveDropdown(null);
-                                  }}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <MapPin className="w-4 h-4 mr-2" />
-                                  View Journey So Far
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    // Generate QR for this purchase
-                                    const qrData = {
-                                      type: 'consumer-purchase',
-                                      purchaseId: purchase.id,
-                                      data: purchase
-                                    };
-                                    alert(`QR Code data: ${JSON.stringify(qrData, null, 2)}`);
-                                    setActiveDropdown(null);
-                                  }}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <QrCode className="w-4 h-4 mr-2" />
-                                  QR Code
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setSelectedPurchaseInsights(purchase);
-                                    setActiveDropdown(null);
-                                  }}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <Brain className="w-4 h-4 mr-2" />
-                                  ML Insights
-                                </button>
-                              </div>
-                            </div>
-                          )}
+                        <div className="flex items-center">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <Brain className="w-3 h-3 mr-1" />
+                            Grade A
+                          </span>
                         </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                          onClick={() => setShowJourneyModal(purchase)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View Journey
+                        </button>
                       </td>
                     </motion.tr>
                   ))}
@@ -449,97 +410,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
               </div>
               
               <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Close</button>
-            </div>
-          </div>
-        )}
-
-        {/* ML Insights Modal for Purchases */}
-        {selectedPurchaseInsights && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold flex items-center">
-                    <Brain className="w-5 h-5 mr-2 text-blue-600" />
-                    ML Insights - {selectedPurchaseInsights.product}
-                  </h3>
-                  <button
-                    onClick={() => setSelectedPurchaseInsights(null)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    ×
-                  </button>
-                </div>
-                
-                <div className="space-y-6">
-                  {/* Purchase Info */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-3">Purchase Details</h4>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <p><span className="font-medium">Product:</span> {selectedPurchaseInsights.product}</p>
-                      <p><span className="font-medium">Quantity:</span> {selectedPurchaseInsights.quantity} kg</p>
-                      <p><span className="font-medium">Price Paid:</span> ${selectedPurchaseInsights.price}</p>
-                      <p><span className="font-medium">Date:</span> {new Date(selectedPurchaseInsights.date).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  
-                  {/* ML Insights */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-                    <div className="flex items-center mb-4">
-                      <Brain className="w-5 h-5 text-blue-600 mr-2" />
-                      <h4 className="font-semibold text-blue-900">ML Analysis Results</h4>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* Quality Grade */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">Predicted Grade</span>
-                          <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                            Grade A
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          95% confidence
-                        </div>
-                      </div>
-
-                      {/* Price Analysis */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">Price Analysis</span>
-                          <span className="text-sm font-semibold text-green-600">
-                            Fair Price
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          Market avg: ${(selectedPurchaseInsights.price / selectedPurchaseInsights.quantity * 0.95).toFixed(2)}/kg
-                        </div>
-                      </div>
-
-                      {/* Fraud Detection */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">Authenticity</span>
-                          <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                            VERIFIED
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          All checks passed
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => setSelectedPurchaseInsights(null)} 
-                  className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Close
-                </button>
-              </div>
             </div>
           </div>
         )}
