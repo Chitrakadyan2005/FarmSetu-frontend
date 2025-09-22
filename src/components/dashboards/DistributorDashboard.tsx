@@ -141,6 +141,8 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Crop Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fraud Risk</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
@@ -168,6 +170,33 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                         </div>
                       </td>
                       <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
+                          insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          Grade {insights.quality.grade}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          {insights.fraud.riskLevel === 'high' ? (
+                            <AlertTriangle className="w-4 h-4 text-red-500 mr-1" />
+                          ) : insights.fraud.riskLevel === 'medium' ? (
+                            <AlertTriangle className="w-4 h-4 text-yellow-500 mr-1" />
+                          ) : (
+                            <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                          )}
+                          <span className={`text-xs font-medium ${
+                            insights.fraud.riskLevel === 'high' ? 'text-red-600' :
+                            insights.fraud.riskLevel === 'medium' ? 'text-yellow-600' :
+                            'text-green-600'
+                          }`}>
+                            {insights.fraud.riskLevel.toUpperCase()}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                           {batch.status}
                         </span>
@@ -178,7 +207,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                           className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
                         >
                           <Eye className="w-4 h-4 mr-1" />
-                          View Actions
+                          View QR
                         </button>
                       </td>
                     </motion.tr>
@@ -250,55 +279,9 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
 
         {showQRModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-2xl w-full p-6 shadow-lg max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold flex items-center text-gray-900">
-                  <Eye className="w-5 h-5 mr-2 text-blue-600" />
-                  Journey - {showQRModal.id}
-                </h3>
-                <button
-                  onClick={() => setShowQRModal(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  ×
-                </button>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="flex gap-4 mb-6">
-                <button
-                  className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
-                >
-                  <QrCode className="w-5 h-5 mr-2" />
-                  View QR Code
-                </button>
-                <button
-                  className="flex-1 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center"
-                >
-                  <Brain className="w-5 h-5 mr-2" />
-                  ML Insights
-                </button>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {/* Batch Info */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-3">Batch Details</h4>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="font-medium">Crop:</span> {showQRModal.cropType}</p>
-                    <p><span className="font-medium">Quantity:</span> {showQRModal.quantity} kg</p>
-                    <p><span className="font-medium">Price:</span> ${showQRModal.price}/kg</p>
-                    <p><span className="font-medium">Status:</span> {showQRModal.status}</p>
-                  </div>
-                </div>
-                
-                {/* ML Insights */}
-                <MLInsightsPanel insights={generateMLInsights(showQRModal)} />
-              </div>
-              
-              {/* QR Code Section */}
-              <div className="text-center mb-6">
-                <h4 className="font-semibold text-gray-900 mb-4">QR Code</h4>
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
+              <h3 className="text-lg font-semibold mb-4">Product QR Code - {showQRModal.id}</h3>
+              <div className="text-center">
                 <div className="bg-white p-4 rounded-lg inline-block shadow">
                   <QRCode value={JSON.stringify({
                     type: 'distributor-batch',
@@ -306,56 +289,11 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                     data: showQRModal
                   })} size={200} />
                 </div>
+                <div className="mt-4">
+                  <button onClick={() => setShowQRModal(null)} className="w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-50">Close</button>
+                </div>
                 <p className="text-xs text-gray-500 mt-2">Share this QR with retailers to show product details</p>
               </div>
-              
-              {/* Enhanced ML Analysis */}
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-purple-900 mb-3 flex items-center">
-                  <Brain className="w-5 h-5 mr-2" />
-                  Detailed ML Analysis
-                </h4>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="font-medium text-purple-800">Predicted Grade:</span>
-                    <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                      generateMLInsights(showQRModal).quality.grade === 'A' ? 'bg-green-100 text-green-800' :
-                      generateMLInsights(showQRModal).quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      Grade {generateMLInsights(showQRModal).quality.grade}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-purple-800">Suggested Price:</span>
-                    <span className="ml-2 text-green-600 font-semibold">
-                      ${generateMLInsights(showQRModal).pricing.suggestedPrice}/kg
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-purple-800">Fraud/Anomaly Detection:</span>
-                    <div className="mt-1">
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        generateMLInsights(showQRModal).fraud.riskLevel === 'low' ? 'bg-green-100 text-green-800' :
-                        generateMLInsights(showQRModal).fraud.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {generateMLInsights(showQRModal).fraud.riskLevel.toUpperCase()} RISK
-                      </span>
-                    </div>
-                    <p className="text-purple-700 mt-1 text-xs">
-                      {generateMLInsights(showQRModal).fraud.recommendation}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <button 
-                onClick={() => setShowQRModal(null)} 
-                className="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                Close
-              </button>
             </div>
           </div>
         )}

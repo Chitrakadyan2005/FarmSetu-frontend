@@ -114,6 +114,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
@@ -138,14 +139,32 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                         {batch.status}
                       </span>
                     </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
+                        insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        Grade {insights.quality.grade}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      <button
-                        onClick={() => setSelectedBatchInsights(batch)}
-                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View Actions
-                      </button>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setShowQRModal(batch)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          QR
+                        </button>
+                        <button
+                          onClick={() => setSelectedBatchInsights(batch)}
+                          className="text-purple-600 hover:text-purple-800 font-medium flex items-center hover:underline"
+                        >
+                          <Brain className="w-4 h-4 mr-1" />
+                          Insights
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 );
@@ -231,9 +250,9 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold flex items-center text-gray-900">
-                    <Eye className="w-5 h-5 mr-2 text-blue-600" />
-                    Journey - {selectedBatchInsights.id}
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <Brain className="w-5 h-5 mr-2 text-blue-600" />
+                    ML Insights - {selectedBatchInsights.id}
                   </h3>
                   <button
                     onClick={() => setSelectedBatchInsights(null)}
@@ -243,24 +262,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                   </button>
                 </div>
                 
-                {/* Action Buttons */}
-                <div className="flex gap-4 mb-6">
-                  <button
-                    onClick={() => setShowQRModal(selectedBatchInsights)}
-                    className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
-                  >
-                    <QrCode className="w-5 h-5 mr-2" />
-                    View QR Code
-                  </button>
-                  <button
-                    className="flex-1 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center"
-                  >
-                    <Brain className="w-5 h-5 mr-2" />
-                    ML Insights
-                  </button>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Batch Info */}
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="font-semibold text-gray-900 mb-3">Batch Details</h4>
@@ -276,31 +278,12 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                   <MLInsightsPanel insights={generateMLInsights(selectedBatchInsights)} />
                 </div>
                 
-                {/* Enhanced ML Analysis */}
-                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
-                  <h4 className="font-semibold text-purple-900 mb-3 flex items-center">
-                    <Brain className="w-5 h-5 mr-2" />
-                    Detailed ML Analysis
-                  </h4>
+                {/* Detailed Analysis */}
+                <div className="mt-6 bg-blue-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-900 mb-3">Detailed Analysis</h4>
                   <div className="space-y-3 text-sm">
                     <div>
-                      <span className="font-medium text-purple-800">Predicted Grade:</span>
-                      <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                        generateMLInsights(selectedBatchInsights).quality.grade === 'A' ? 'bg-green-100 text-green-800' :
-                        generateMLInsights(selectedBatchInsights).quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        Grade {generateMLInsights(selectedBatchInsights).quality.grade}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-purple-800">Suggested Selling Price:</span>
-                      <span className="ml-2 text-green-600 font-semibold">
-                        ${generateMLInsights(selectedBatchInsights).pricing.suggestedPrice}/kg
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-purple-800">Quality Factors:</span>
+                      <span className="font-medium text-blue-800">Quality Factors:</span>
                       <ul className="list-disc list-inside text-blue-700 mt-1">
                         {generateMLInsights(selectedBatchInsights).quality.factors.map((factor, idx) => (
                           <li key={idx}>{factor}</li>
@@ -308,17 +291,8 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                       </ul>
                     </div>
                     <div>
-                      <span className="font-medium text-purple-800">Fraud/Anomaly Detection:</span>
-                      <div className="mt-1">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          generateMLInsights(selectedBatchInsights).fraud.riskLevel === 'low' ? 'bg-green-100 text-green-800' :
-                          generateMLInsights(selectedBatchInsights).fraud.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {generateMLInsights(selectedBatchInsights).fraud.riskLevel.toUpperCase()} RISK
-                        </span>
-                      </div>
-                      <p className="text-purple-700 mt-1 text-xs">
+                      <span className="font-medium text-blue-800">Fraud Assessment:</span>
+                      <p className="text-blue-700 mt-1">
                         {generateMLInsights(selectedBatchInsights).fraud.recommendation}
                       </p>
                     </div>
@@ -327,7 +301,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                 
                 <button 
                   onClick={() => setSelectedBatchInsights(null)} 
-                  className="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Close
                 </button>
