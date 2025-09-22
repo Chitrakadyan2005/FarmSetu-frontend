@@ -9,11 +9,14 @@ import {
   QrCode,
   Scan,
   Eye,
-  Search
+  Search,
+  Brain
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
 import QRCode from 'react-qr-code';
+import MLInsightsPanel from '../insights/MLInsightsPanel';
+import { generateMLInsights } from '../../utils/mlInsights';
 
 interface FarmerDashboardProps {
   currentPage: string;
@@ -25,6 +28,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
   const [showQRModal, setShowQRModal] = useState<any>(null);
   const [scanInput, setScanInput] = useState('');
   const [scanResult, setScanResult] = useState<any>(null);
+  const [selectedBatchInsights, setSelectedBatchInsights] = useState<any>(null);
 
   const userBatches = batches.filter(batch => batch.farmerId === user?.id);
 
@@ -98,6 +102,9 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">My Batches</h3>
+          </div>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -107,39 +114,61 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {userBatches.map((batch) => (
-                <motion.tr
-                  key={batch.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="hover:bg-gray-50"
-                >
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
-                      {batch.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <button
-                      onClick={() => setShowQRModal(batch)}
-                      className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      View QR
-                    </button>
-                  </td>
-                </motion.tr>
-              ))}
+              {userBatches.map((batch) => {
+                const insights = generateMLInsights(batch);
+                return (
+                  <motion.tr
+                    key={batch.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="hover:bg-gray-50"
+                  >
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
+                        {batch.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
+                        insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        Grade {insights.quality.grade}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setShowQRModal(batch)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          QR
+                        </button>
+                        <button
+                          onClick={() => setSelectedBatchInsights(batch)}
+                          className="text-purple-600 hover:text-purple-800 font-medium flex items-center hover:underline"
+                        >
+                          <Brain className="w-4 h-4 mr-1" />
+                          Insights
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
           {userBatches.length === 0 && (
@@ -204,6 +233,78 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">Share this QR with buyers to show product details</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ML Insights Modal */}
+        {selectedBatchInsights && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={() => setSelectedBatchInsights(null)}
+          >
+            <div
+              className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <Brain className="w-5 h-5 mr-2 text-blue-600" />
+                    ML Insights - {selectedBatchInsights.id}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedBatchInsights(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ×
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Batch Info */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">Batch Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <p><span className="font-medium">Crop:</span> {selectedBatchInsights.cropType}</p>
+                      <p><span className="font-medium">Quantity:</span> {selectedBatchInsights.quantity} kg</p>
+                      <p><span className="font-medium">Price:</span> ${selectedBatchInsights.price}/kg</p>
+                      <p><span className="font-medium">Harvest:</span> {new Date(selectedBatchInsights.harvestDate).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  
+                  {/* ML Insights */}
+                  <MLInsightsPanel insights={generateMLInsights(selectedBatchInsights)} />
+                </div>
+                
+                {/* Detailed Analysis */}
+                <div className="mt-6 bg-blue-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-900 mb-3">Detailed Analysis</h4>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-medium text-blue-800">Quality Factors:</span>
+                      <ul className="list-disc list-inside text-blue-700 mt-1">
+                        {generateMLInsights(selectedBatchInsights).quality.factors.map((factor, idx) => (
+                          <li key={idx}>{factor}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <span className="font-medium text-blue-800">Fraud Assessment:</span>
+                      <p className="text-blue-700 mt-1">
+                        {generateMLInsights(selectedBatchInsights).fraud.recommendation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => setSelectedBatchInsights(null)} 
+                  className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

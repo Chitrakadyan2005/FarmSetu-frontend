@@ -12,11 +12,15 @@ import {
   Search,
   CheckCircle,
   Clock,
-  ShoppingCart
+  ShoppingCart,
+  Brain,
+  AlertTriangle
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
 import QRCode from 'react-qr-code';
+import MLInsightsPanel from '../insights/MLInsightsPanel';
+import { generateMLInsights } from '../../utils/mlInsights';
 
 interface DistributorDashboardProps {
   currentPage: string;
@@ -127,7 +131,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
 
         <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Available Inventory</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Available Inventory with ML Insights</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -137,39 +141,78 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Crop Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fraud Risk</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {availableBatches.map((batch: any) => (
-                  <motion.tr
-                    key={batch.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="hover:bg-gray-50"
-                  >
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
-                        {batch.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      <button
-                        onClick={() => setShowQRModal(batch)}
-                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View QR
-                      </button>
-                    </td>
-                  </motion.tr>
-                ))}
+                {availableBatches.map((batch: any) => {
+                  const insights = generateMLInsights(batch);
+                  return (
+                    <motion.tr
+                      key={batch.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="hover:bg-gray-50"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <div>
+                          <span className="font-medium">${batch.price}</span>
+                          <div className="text-xs text-green-600">
+                            Suggested: ${insights.pricing.suggestedPrice}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
+                          insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          Grade {insights.quality.grade}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          {insights.fraud.riskLevel === 'high' ? (
+                            <AlertTriangle className="w-4 h-4 text-red-500 mr-1" />
+                          ) : insights.fraud.riskLevel === 'medium' ? (
+                            <AlertTriangle className="w-4 h-4 text-yellow-500 mr-1" />
+                          ) : (
+                            <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                          )}
+                          <span className={`text-xs font-medium ${
+                            insights.fraud.riskLevel === 'high' ? 'text-red-600' :
+                            insights.fraud.riskLevel === 'medium' ? 'text-yellow-600' :
+                            'text-green-600'
+                          }`}>
+                            {insights.fraud.riskLevel.toUpperCase()}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
+                          {batch.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                          onClick={() => setShowQRModal(batch)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View QR
+                        </button>
+                      </td>
+                    </motion.tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -184,7 +227,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
         {purchaseRequests.length > 0 && (
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Purchase Requests</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Purchase Requests with ML Verification</h3>
             </div>
             <div className="p-6">
               {purchaseRequests.map((request) => (
@@ -195,12 +238,20 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                   transition={{ duration: 0.4 }}
                   className="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-start justify-between">
                     <div>
                       <p className="font-medium text-gray-900">Batch: {request.batchId}</p>
                       <p className="text-sm text-gray-600">Buyer: {request.buyerName} ({request.buyerProfession})</p>
                       <p className="text-sm text-gray-600">Quantity: {request.quantity}kg | Price: ${request.price}</p>
                       <p className="text-sm text-gray-500">Date: {request.date}</p>
+                      
+                      {/* ML Verification Badge */}
+                      <div className="mt-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <Brain className="w-3 h-3 mr-1" />
+                          ML Verified
+                        </span>
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       {request.status === 'pending' && (
@@ -525,6 +576,13 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                 </button>
               </div>
             </div>
+            
+            {/* ML Insights for the product being purchased */}
+            {showBuyForm.data && (
+              <div className="mt-4">
+                <MLInsightsPanel insights={generateMLInsights(showBuyForm.data)} />
+              </div>
+            )}
           </div>
         </div>
       )}

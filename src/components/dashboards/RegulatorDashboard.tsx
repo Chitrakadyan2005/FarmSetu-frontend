@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Shield, FileText, AlertTriangle, CheckCircle, Eye } from 'lucide-react';
+import { Search, Shield, FileText, AlertTriangle, CheckCircle, Eye, Brain } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
+import MLInsightsPanel from '../insights/MLInsightsPanel';
+import { generateMLInsights } from '../../utils/mlInsights';
 
 interface RegulatorDashboardProps {
   currentPage: string;
@@ -90,14 +92,17 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
             {/* Compliance Overview */}
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Compliance Overview</h3>
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <Brain className="w-5 h-5 mr-2 text-blue-600" />
+                  ML-Enhanced Compliance Overview
+                </h3>
                 <div className="flex items-center">
                   <div className={`w-3 h-3 rounded-full mr-2 ${getComplianceScore(selectedBatch) >= 80 ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
                   <span className="font-semibold">{getComplianceScore(selectedBatch)}% Compliant</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-2xl font-bold text-gray-900">{selectedBatch.id}</p>
                   <p className="text-sm text-gray-600">Batch ID</p>
@@ -118,6 +123,12 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
                   </span>
                   <p className="text-sm text-gray-600 mt-1">Current Status</p>
                 </div>
+              </div>
+              
+              {/* ML Insights Panel */}
+              <div className="border-t border-gray-200 pt-6">
+                <h4 className="font-semibold text-gray-900 mb-4">ML Analysis Results</h4>
+                <MLInsightsPanel insights={generateMLInsights(selectedBatch)} />
               </div>
             </div>
 
@@ -166,7 +177,7 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
 
             {/* Digital Signatures */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Digital Signatures & Verification</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">ML-Enhanced Verification</h3>
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
@@ -182,31 +193,37 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
 
                 <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-center">
-                    <Shield className="w-5 h-5 text-green-500 mr-3" />
+                    <Brain className="w-5 h-5 text-blue-500 mr-3" />
                     <div>
-                      <p className="font-medium">Quality Inspection</p>
-                      <p className="text-sm text-gray-600">Third-party validation</p>
+                      <p className="font-medium">ML Quality Analysis</p>
+                      <p className="text-sm text-gray-600">AI-powered quality assessment</p>
                     </div>
                   </div>
-                  <span className="text-green-600 font-medium">Verified</span>
+                  <span className="text-blue-600 font-medium">Grade {generateMLInsights(selectedBatch).quality.grade}</span>
                 </div>
 
                 <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-center">
-                    <Shield className="w-5 h-5 text-yellow-500 mr-3" />
+                    <Brain className="w-5 h-5 text-green-500 mr-3" />
                     <div>
-                      <p className="font-medium">Transport Conditions</p>
-                      <p className="text-sm text-gray-600">Temperature and handling logs</p>
+                      <p className="font-medium">Fraud Detection</p>
+                      <p className="text-sm text-gray-600">ML-based authenticity check</p>
                     </div>
                   </div>
-                  <span className="text-yellow-600 font-medium">Partial</span>
+                  <span className={`font-medium ${
+                    generateMLInsights(selectedBatch).fraud.riskLevel === 'low' ? 'text-green-600' :
+                    generateMLInsights(selectedBatch).fraud.riskLevel === 'medium' ? 'text-yellow-600' :
+                    'text-red-600'
+                  }`}>
+                    {generateMLInsights(selectedBatch).fraud.riskLevel.toUpperCase()} RISK
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Compliance Checklist */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Compliance Checklist</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">ML-Enhanced Compliance Checklist</h3>
               
               <div className="space-y-3">
                 <div className="flex items-center">
@@ -218,12 +235,12 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
                   <span className="text-gray-900">Supply chain transparency maintained</span>
                 </div>
                 <div className="flex items-center">
-                  <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                  <span className="text-gray-900">Proper documentation provided</span>
+                  <Brain className="w-5 h-5 text-blue-500 mr-3" />
+                  <span className="text-gray-900">ML quality grade: {generateMLInsights(selectedBatch).quality.grade} ({Math.round(generateMLInsights(selectedBatch).quality.confidence * 100)}% confidence)</span>
                 </div>
                 <div className="flex items-center">
-                  <AlertTriangle className="w-5 h-5 text-yellow-500 mr-3" />
-                  <span className="text-gray-900">Cold chain monitoring needs verification</span>
+                  <Brain className="w-5 h-5 text-green-500 mr-3" />
+                  <span className="text-gray-900">Fraud risk assessment: {generateMLInsights(selectedBatch).fraud.riskLevel} risk level</span>
                 </div>
               </div>
             </div>
@@ -388,7 +405,10 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
         className="bg-white rounded-lg shadow"
       >
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Batch Compliance</h3>
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+            <Brain className="w-5 h-5 mr-2 text-blue-600" />
+            ML-Enhanced Batch Compliance
+          </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -404,7 +424,10 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
                   Farmer
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Compliance Score
+                  ML Quality Grade
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fraud Risk
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -414,6 +437,7 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
             <tbody className="bg-white divide-y divide-gray-200">
               {batches.map((batch) => {
                 const score = getComplianceScore(batch);
+                const insights = generateMLInsights(batch);
                 return (
                   <tr key={batch.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -426,10 +450,22 @@ const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({ currentPage }) 
                       {batch.farmerName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className={`w-3 h-3 rounded-full mr-2 ${score >= 80 ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                        <span className="text-sm font-medium">{score}%</span>
-                      </div>
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
+                        insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        Grade {insights.quality.grade}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        insights.fraud.riskLevel === 'low' ? 'bg-green-100 text-green-800' :
+                        insights.fraud.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {insights.fraud.riskLevel.toUpperCase()}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <button
