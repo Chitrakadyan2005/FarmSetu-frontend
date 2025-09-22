@@ -21,13 +21,104 @@ interface Purchase {
   rating?: number;
 }
 
+// Dummy purchase data
+const dummyPurchases: Purchase[] = [
+  {
+    id: 'P001',
+    batchId: 'BTH001',
+    product: 'Organic Tomatoes',
+    quantity: 2,
+    price: 11.98,
+    date: '2024-01-18',
+    location: 'Oregon, USA',
+    journey: [
+      {
+        stage: 'Farm Origin',
+        handler: 'John Farmer',
+        location: 'California, USA',
+        timestamp: '2024-01-15',
+        details: 'Harvested 100kg of Organic Tomatoes'
+      },
+      {
+        stage: 'Distribution Center',
+        handler: 'Green Valley Distributors',
+        location: 'Nevada, USA',
+        timestamp: '2024-01-16',
+        details: 'Quality checked and packaged for retail'
+      },
+      {
+        stage: 'Retail Store',
+        handler: 'Fresh Market Store',
+        location: 'Oregon, USA',
+        timestamp: '2024-01-17',
+        details: 'Available for consumer purchase'
+      }
+    ],
+    feedback: 'Excellent quality tomatoes! Very fresh and flavorful.',
+    rating: 5
+  },
+  {
+    id: 'P002',
+    batchId: 'BTH002',
+    product: 'Fresh Carrots',
+    quantity: 1,
+    price: 3.49,
+    date: '2024-01-22',
+    location: 'Oregon, USA',
+    journey: [
+      {
+        stage: 'Farm Origin',
+        handler: 'John Farmer',
+        location: 'California, USA',
+        timestamp: '2024-01-20',
+        details: 'Harvested 50kg of Fresh Carrots'
+      },
+      {
+        stage: 'Local Market',
+        handler: 'Farmers Market',
+        location: 'Oregon, USA',
+        timestamp: '2024-01-21',
+        details: 'Direct from farm to market'
+      }
+    ],
+    feedback: 'Good quality carrots, though could be a bit fresher.',
+    rating: 4
+  },
+  {
+    id: 'P003',
+    batchId: 'BTH003',
+    product: 'Organic Lettuce',
+    quantity: 3,
+    price: 8.97,
+    date: '2024-01-25',
+    location: 'Oregon, USA',
+    journey: [
+      {
+        stage: 'Farm Origin',
+        handler: 'Green Leaf Farm',
+        location: 'Washington, USA',
+        timestamp: '2024-01-23',
+        details: 'Harvested organic lettuce heads'
+      },
+      {
+        stage: 'Distribution',
+        handler: 'Organic Distributors Inc',
+        location: 'Oregon, USA',
+        timestamp: '2024-01-24',
+        details: 'Temperature controlled transport'
+      }
+    ],
+    rating: 3
+  }
+];
+
 const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) => {
   const { getBatchById } = useApp();
   const [scanInput, setScanInput] = useState('');
   const [scannedBatch, setScannedBatch] = useState<ProduceBatch | null>(null);
   const [scanResult, setScanResult] = useState<'found' | 'not-found' | null>(null);
   const [showBuyForm, setShowBuyForm] = useState<any>(null);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>(dummyPurchases);
   const [showJourneyModal, setShowJourneyModal] = useState<Purchase | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   
@@ -182,7 +273,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
           ) : (
             <div className="text-center py-8">
               <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No purchases yet. Visit the main dashboard to scan products and make purchases.</p>
+              <p className="text-gray-500">No additional purchases yet. Visit the main dashboard to scan more products and make purchases.</p>
             </div>
           )}
         </div>

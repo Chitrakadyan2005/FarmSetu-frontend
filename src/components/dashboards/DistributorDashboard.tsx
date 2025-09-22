@@ -34,7 +34,7 @@ interface PurchaseRequest {
   status: 'pending' | 'approved' | 'rejected';
 }
 
-const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage }) => {
+const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: (page: string) => void }> = ({ currentPage, onNavigate }) => {
   const { batches, transferBatch } = useApp();
   const [scanInput, setScanInput] = useState('');
   const [scanResult, setScanResult] = useState<any>(null);
@@ -106,6 +106,10 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
     setPurchaseRequests(prev => prev.map(req => 
       req.id === requestId ? { ...req, status: 'approved' as const } : req
     ));
+    // Navigate to transfers page after approval
+    if (onNavigate) {
+      setTimeout(() => onNavigate('transfers'), 1000);
+    }
   };
 
   if (currentPage === 'transfers') {
@@ -303,6 +307,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.button 
             whileHover={{ scale: 1.02 }}
+            onClick={() => onNavigate && onNavigate('transfers')}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <CheckCircle className="w-5 h-5 text-green-600 mr-3" />
