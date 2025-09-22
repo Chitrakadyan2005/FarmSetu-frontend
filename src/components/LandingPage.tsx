@@ -50,7 +50,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
           filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.4))'
-        }}>Linking Farm to Fork</span>
+        }}>FarmSetu</span>
         <br />
         <span className="text-3xl sm:text-4xl text-white drop-shadow-2xl" style={{ 
           fontFamily: "'Montserrat', sans-serif", 
@@ -59,7 +59,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           letterSpacing: '0.08em',
           textShadow: '2px 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.6)',
           filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.1))'
-        }}>Transparent Food Supply</span>
+        }}>Linking Farm to Fork</span>
       </h1>
       
       <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50 drop-shadow-lg" style={{ 
