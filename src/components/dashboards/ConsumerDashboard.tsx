@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye, Brain } from 'lucide-react';
+import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye, Brain, CheckCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
 import MLInsightsPanel from '../insights/MLInsightsPanel';
@@ -250,7 +250,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -283,21 +282,13 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                           <span className="text-sm text-gray-500">No rating</span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <Brain className="w-3 h-3 mr-1" />
-                            Grade A
-                          </span>
-                        </div>
-                      </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         <button
                           onClick={() => setShowJourneyModal(purchase)}
                           className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
                         >
                           <Eye className="w-4 h-4 mr-1" />
-                          View Journey
+                          View Actions
                         </button>
                       </td>
                     </motion.tr>
@@ -355,36 +346,81 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
         {showJourneyModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <Brain className="w-5 h-5 mr-2 text-blue-600" />
-                Farm-to-Fork Journey: {showJourneyModal.product}
-              </h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold flex items-center text-gray-900">
+                  <Eye className="w-5 h-5 mr-2 text-blue-600" />
+                  Journey - {showJourneyModal.product}
+                </h3>
+                <button
+                  onClick={() => setShowJourneyModal(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
               
-              {/* ML Insights for this purchase */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">ML Quality & Authenticity Analysis</h4>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
-                    <Shield className="w-5 h-5 text-green-600 mr-2" />
-                    <span className="font-medium text-green-800">Verified Authentic</span>
+              {/* Action Buttons */}
+              <div className="flex gap-4 mb-6">
+                <button
+                  className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+                >
+                  <QrCode className="w-5 h-5 mr-2" />
+                  View QR Code
+                </button>
+                <button
+                  className="flex-1 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center"
+                >
+                  <Brain className="w-5 h-5 mr-2" />
+                  ML Insights
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Purchase Info */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-3">Purchase Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <p><span className="font-medium">Product:</span> {showJourneyModal.product}</p>
+                    <p><span className="font-medium">Quantity:</span> {showJourneyModal.quantity} kg</p>
+                    <p><span className="font-medium">Price:</span> ${showJourneyModal.price}</p>
+                    <p><span className="font-medium">Date:</span> {new Date(showJourneyModal.date).toLocaleDateString()}</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium text-green-700">Quality Grade:</span>
-                      <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Grade A</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-green-700">Fraud Risk:</span>
-                      <span className="ml-2 text-green-600">Low (95% confidence)</span>
-                    </div>
+                </div>
+                
+                {/* ML Insights */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <Brain className="w-5 h-5 text-blue-600 mr-2" />
+                    <h4 className="font-semibold text-blue-900">ML Insights</h4>
                   </div>
-                  <div className="mt-2 text-sm text-green-700">
-                    <span className="font-medium">Key Factors:</span> Organic certification, Recently harvested, Premium growing region
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-3 shadow-sm">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Quality Grade</span>
+                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                          Grade A
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-600">95% confidence</div>
+                    </div>
+                    <div className="bg-white rounded-lg p-3 shadow-sm">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Fraud Check</span>
+                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                          <CheckCircle className="w-3 h-3 inline mr-1" />
+                          LOW RISK
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-600">All checks passed</div>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="space-y-4">
+              {/* Journey Steps */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-4">Farm-to-Fork Journey</h4>
+                <div className="space-y-4">
                 {showJourneyModal.journey.map((step: any, index: number) => (
                   <div key={index} className="flex items-start">
                     <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
@@ -407,9 +443,48 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                     </div>
                   </div>
                 ))}
+                </div>
               </div>
               
-              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Close</button>
+              {/* Enhanced ML Analysis */}
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-purple-900 mb-3 flex items-center">
+                  <Brain className="w-5 h-5 mr-2" />
+                  Detailed ML Analysis
+                </h4>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-medium text-purple-800">Predicted Grade:</span>
+                    <span className="ml-2 px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                      Grade A
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-purple-800">Suggested Price:</span>
+                    <span className="ml-2 text-green-600 font-semibold">
+                      ${(showJourneyModal.price / showJourneyModal.quantity).toFixed(2)}/kg
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-purple-800">Fraud/Anomaly Detection:</span>
+                    <div className="mt-1">
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                        LOW RISK
+                      </span>
+                    </div>
+                    <p className="text-purple-700 mt-1 text-xs">
+                      No issues detected. Proceed with confidence.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => setShowJourneyModal(null)} 
+                className="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Close
+              </button>
             </div>
           </div>
         )}
