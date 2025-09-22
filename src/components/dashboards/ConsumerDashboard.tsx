@@ -225,63 +225,125 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
         transition={{ duration: 0.6 }}
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="text-center mb-8">
+        <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h2>
           <p className="text-gray-600">View your purchase history and product journeys</p>
         </div>
 
         {/* Purchase History */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Purchase History</h3>
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Purchase History</h3>
+          </div>
           
           {purchases.length > 0 ? (
-            <div className="space-y-4">
-              {purchases.map((purchase) => (
-                <div key={purchase.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h4 className="font-medium text-gray-900">{purchase.product}</h4>
-                      <p className="text-sm text-gray-600">
-                        Batch: {purchase.batchId} | {purchase.quantity}kg | ${purchase.price}
-                      </p>
-                      <p className="text-sm text-gray-500">Purchased: {purchase.date}</p>
-                    </div>
-                    <button
-                      onClick={() => setShowJourneyModal(purchase)}
-                      className="text-blue-600 hover:text-blue-700 text-sm"
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purchase ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Batch ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {purchases.map((purchase) => (
+                    <motion.tr
+                      key={purchase.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="hover:bg-gray-50"
                     >
-                      View Journey
-                    </button>
-                  </div>
-                  
-                  {purchase.feedback && (
-                    <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} className={`w-4 h-4 ${star <= (purchase.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-600">({purchase.rating}/5)</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{purchase.feedback}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{purchase.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{purchase.product}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{purchase.batchId}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{purchase.quantity} kg</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">${purchase.price}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{new Date(purchase.date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">
+                        {purchase.rating ? (
+                          <div className="flex items-center">
+                            <div className="flex">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star key={star} className={`w-4 h-4 ${star <= (purchase.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-600 ml-1">({purchase.rating}/5)</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500">No rating</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                          onClick={() => setShowJourneyModal(purchase)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View Journey
+                        </button>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           ) : (
-            <div className="text-center py-8">
+            <div className="text-center py-12">
               <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No additional purchases yet. Visit the main dashboard to scan more products and make purchases.</p>
             </div>
           )}
         </div>
 
+        {/* Feedback Section for purchases with feedback */}
+        {purchases.some(p => p.feedback) && (
+          <div className="bg-white rounded-xl shadow-md overflow-hidden mt-8">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Purchase Feedback</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {purchases.filter(p => p.feedback).map((purchase) => (
+                  <motion.div
+                    key={purchase.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{purchase.product}</h4>
+                        <p className="text-sm text-gray-600">Purchase ID: {purchase.id} | {purchase.date}</p>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className={`w-4 h-4 ${star <= (purchase.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-600 ml-1">({purchase.rating}/5)</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{purchase.feedback}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Journey Modal */}
         {showJourneyModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg">
               <h3 className="text-lg font-semibold mb-4">Farm-to-Fork Journey: {showJourneyModal.product}</h3>
               
               <div className="space-y-4">
@@ -309,7 +371,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                 ))}
               </div>
               
-              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg">Close</button>
+              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Close</button>
             </div>
           </div>
         )}
