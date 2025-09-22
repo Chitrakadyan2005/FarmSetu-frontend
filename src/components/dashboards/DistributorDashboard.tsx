@@ -12,15 +12,11 @@ import {
   Search,
   CheckCircle,
   Clock,
-  ShoppingCart,
-  Brain,
-  AlertTriangle
+  ShoppingCart
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
-import QRCode from 'react-qr-code';
-import MLInsightsPanel from '../insights/MLInsightsPanel';
-import { generateMLInsights } from '../../utils/mlInsights';
+import JourneyModal from '../common/JourneyModal';
 
 interface DistributorDashboardProps {
   currentPage: string;
@@ -43,8 +39,8 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
   const [scanInput, setScanInput] = useState('');
   const [scanResult, setScanResult] = useState<any>(null);
   const [showBuyForm, setShowBuyForm] = useState<any>(null);
-  const [showQRModal, setShowQRModal] = useState<any>(null);
   const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
+  const [selectedBatch, setSelectedBatch] = useState<any>(null);
   
   const [buyForm, setBuyForm] = useState({
     quantity: '',
@@ -116,6 +112,38 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
     }
   };
 
+  const getBatchQRValue = (batch: any) => {
+    return JSON.stringify({
+      type: 'distributor-batch',
+      batchId: batch.id,
+      data: batch
+    });
+  };
+
+  const getBatchJourney = (batch: any) => {
+    const journey = [
+      {
+        stage: 'Farm Origin',
+        handler: batch.farmerName,
+        location: batch.location,
+        timestamp: batch.harvestDate,
+        details: `Harvested ${batch.quantity}kg of ${batch.cropType}`
+      }
+    ];
+
+    batch.transfers?.forEach((transfer: any, index: number) => {
+      journey.push({
+        stage: `Transfer ${index + 1}`,
+        handler: transfer.to,
+        location: transfer.location,
+        timestamp: transfer.timestamp,
+        details: `Transferred to ${transfer.to}`
+      });
+    });
+
+    return journey;
+  };
+
   if (currentPage === 'transfers') {
     return (
       <motion.div
@@ -141,16 +169,12 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Crop Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fraud Risk</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {availableBatches.map((batch: any) => {
-                  const insights = generateMLInsights(batch);
-                  return (
+                {availableBatches.map((batch: any) => (
                     <motion.tr
                       key={batch.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -161,41 +185,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        <div>
-                          <span className="font-medium">${batch.price}</span>
-                          <div className="text-xs text-green-600">
-                            Suggested: ${insights.pricing.suggestedPrice}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
-                          insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          Grade {insights.quality.grade}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          {insights.fraud.riskLevel === 'high' ? (
-                            <AlertTriangle className="w-4 h-4 text-red-500 mr-1" />
-                          ) : insights.fraud.riskLevel === 'medium' ? (
-                            <AlertTriangle className="w-4 h-4 text-yellow-500 mr-1" />
-                          ) : (
-                            <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
-                          )}
-                          <span className={`text-xs font-medium ${
-                            insights.fraud.riskLevel === 'high' ? 'text-red-600' :
-                            insights.fraud.riskLevel === 'medium' ? 'text-yellow-600' :
-                            'text-green-600'
-                          }`}>
-                            {insights.fraud.riskLevel.toUpperCase()}
-                          </span>
-                        </div>
-                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                           {batch.status}
@@ -203,16 +193,15 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         <button
-                          onClick={() => setShowQRModal(batch)}
+                          onClick={() => setSelectedBatch(batch)}
                           className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
                         >
                           <Eye className="w-4 h-4 mr-1" />
-                          View QR
+                          View Actions
                         </button>
                       </td>
                     </motion.tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
           </div>
@@ -277,25 +266,16 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
           </div>
         )}
 
-        {showQRModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
-              <h3 className="text-lg font-semibold mb-4">Product QR Code - {showQRModal.id}</h3>
-              <div className="text-center">
-                <div className="bg-white p-4 rounded-lg inline-block shadow">
-                  <QRCode value={JSON.stringify({
-                    type: 'distributor-batch',
-                    batchId: showQRModal.id,
-                    data: showQRModal
-                  })} size={200} />
-                </div>
-                <div className="mt-4">
-                  <button onClick={() => setShowQRModal(null)} className="w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-50">Close</button>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Share this QR with retailers to show product details</p>
-              </div>
-            </div>
-          </div>
+        {/* Journey Modal */}
+        {selectedBatch && (
+          <JourneyModal
+            isOpen={!!selectedBatch}
+            onClose={() => setSelectedBatch(null)}
+            batch={selectedBatch}
+            journey={getBatchJourney(selectedBatch)}
+            qrValue={getBatchQRValue(selectedBatch)}
+            title={`Batch Actions - ${selectedBatch.id}`}
+          />
         )}
       </motion.div>
     );
@@ -576,13 +556,6 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                 </button>
               </div>
             </div>
-            
-            {/* ML Insights for the product being purchased */}
-            {showBuyForm.data && (
-              <div className="mt-4">
-                <MLInsightsPanel insights={generateMLInsights(showBuyForm.data)} />
-              </div>
-            )}
           </div>
         </div>
       )}

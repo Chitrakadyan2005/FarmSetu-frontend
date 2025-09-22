@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye, Brain } from 'lucide-react';
+import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
-import MLInsightsPanel from '../insights/MLInsightsPanel';
-import { generateMLInsights } from '../../utils/mlInsights';
+import JourneyModal from '../common/JourneyModal';
 
 interface ConsumerDashboardProps {
   currentPage: string;
@@ -121,7 +120,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
   const [scanResult, setScanResult] = useState<'found' | 'not-found' | null>(null);
   const [showBuyForm, setShowBuyForm] = useState<any>(null);
   const [purchases, setPurchases] = useState<Purchase[]>(dummyPurchases);
-  const [showJourneyModal, setShowJourneyModal] = useState<Purchase | null>(null);
+  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   
   const [buyForm, setBuyForm] = useState({
@@ -183,30 +182,13 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
     console.log('Blockchain entry created:', purchase);
   };
 
-  const getJourneySteps = (batch: ProduceBatch) => {
-    const steps = [
-      {
-        title: 'Farm Origin',
-        description: batch.farmerName,
-        location: batch.location,
-        date: batch.harvestDate,
-        icon: '🌱',
-        status: 'completed'
-      }
-    ];
-
-    batch.transfers?.forEach((transfer, index) => {
-      steps.push({
-        title: `Transfer ${index + 1}`,
-        description: transfer.to,
-        location: transfer.location,
-        date: transfer.timestamp,
-        icon: index === batch.transfers.length - 1 ? '🏪' : '🚚',
-        status: 'completed'
-      });
+  const getPurchaseQRValue = (purchase: Purchase) => {
+    return JSON.stringify({
+      type: 'consumer-purchase',
+      purchaseId: purchase.id,
+      batchId: purchase.batchId,
+      data: purchase
     });
-
-    return steps;
   };
 
   const openCamera = () => {
@@ -250,7 +232,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ML Grade</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -283,21 +264,13 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                           <span className="text-sm text-gray-500">No rating</span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <Brain className="w-3 h-3 mr-1" />
-                            Grade A
-                          </span>
-                        </div>
-                      </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         <button
-                          onClick={() => setShowJourneyModal(purchase)}
+                          onClick={() => setSelectedPurchase(purchase)}
                           className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
                         >
                           <Eye className="w-4 h-4 mr-1" />
-                          View Journey
+                          View Actions
                         </button>
                       </td>
                     </motion.tr>
@@ -352,66 +325,22 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
         )}
 
         {/* Journey Modal */}
-        {showJourneyModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <Brain className="w-5 h-5 mr-2 text-blue-600" />
-                Farm-to-Fork Journey: {showJourneyModal.product}
-              </h3>
-              
-              {/* ML Insights for this purchase */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">ML Quality & Authenticity Analysis</h4>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
-                    <Shield className="w-5 h-5 text-green-600 mr-2" />
-                    <span className="font-medium text-green-800">Verified Authentic</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium text-green-700">Quality Grade:</span>
-                      <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Grade A</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-green-700">Fraud Risk:</span>
-                      <span className="ml-2 text-green-600">Low (95% confidence)</span>
-                    </div>
-                  </div>
-                  <div className="mt-2 text-sm text-green-700">
-                    <span className="font-medium">Key Factors:</span> Organic certification, Recently harvested, Premium growing region
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                {showJourneyModal.journey.map((step: any, index: number) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
-                      {step.stage?.toLowerCase().includes('farm') ? '🌱' : 
-                       step.stage?.toLowerCase().includes('distribution') ? '🚚' : '🏪'}
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-gray-900">{step.stage}</h4>
-                        <span className="text-sm text-gray-500">
-                          {new Date(step.timestamp).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-gray-600">{step.handler}</p>
-                      <p className="text-sm text-gray-500 flex items-center">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {step.location}
-                      </p>
-                      <p className="text-sm text-gray-700 mt-1">{step.details}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Close</button>
-            </div>
-          </div>
+        {selectedPurchase && (
+          <JourneyModal
+            isOpen={!!selectedPurchase}
+            onClose={() => setSelectedPurchase(null)}
+            batch={{
+              id: selectedPurchase.batchId,
+              cropType: selectedPurchase.product,
+              price: selectedPurchase.price / selectedPurchase.quantity,
+              quantity: selectedPurchase.quantity,
+              harvestDate: selectedPurchase.date,
+              location: selectedPurchase.location
+            }}
+            journey={selectedPurchase.journey}
+            qrValue={getPurchaseQRValue(selectedPurchase)}
+            title={`Purchase Actions - ${selectedPurchase.product}`}
+          />
         )}
       </motion.div>
     );
@@ -536,7 +465,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                 <p><span className="font-medium">Location:</span> {scannedBatch.location}</p>
               </div>
             </div>
-            <MLInsightsPanel insights={generateMLInsights(scannedBatch)} />
           </div>
         )}
       </motion.div>
@@ -563,22 +491,6 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.6 }}
-          whileHover={{ scale: 1.02 }}
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
-        >
-          <div className="flex items-center mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Brain className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 ml-3">ML Insights</h3>
-          </div>
-          <p className="text-gray-600">AI-powered quality grading and fraud detection for every product.</p>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.7 }}
           whileHover={{ scale: 1.02 }}
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
