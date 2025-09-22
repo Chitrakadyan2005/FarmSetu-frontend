@@ -49,16 +49,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         }}>FarmSetu</span>
         <br />
         <span className="text-3xl sm:text-4xl text-white" style={{ 
-          fontFamily: "'Montserrat', sans-serif", 
-          fontWeight: '200', 
+          fontFamily: "'Playfair Display', serif", 
+          fontWeight: '700', 
           letterSpacing: '0.08em',
           textShadow: '0 4px 8px rgba(0,0,0,0.5)'
         }}>Linking Farm to Fork</span>
       </h1>
       
       <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50" style={{ 
-        fontFamily: "'Crimson Text', serif", 
-        fontWeight: '300', 
+        fontFamily: "'Inter', sans-serif", 
+        fontWeight: '400', 
         lineHeight: '1.8',
         letterSpacing: '0.01em',
         textShadow: '0 2px 4px rgba(0,0,0,0.6)'
@@ -86,8 +86,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           style={{ 
             fontFamily: "'Poppins', sans-serif",
-            backdropFilter: 'blur(10px)',
-            background: 'transparent',
+            backdropFilter: 'blur(5px)',
+            background: 'rgba(255, 255, 255, 0)',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
           }}
         >
