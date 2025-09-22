@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
-import QRCode from 'react-qr-code';
+import JourneyModal from '../common/JourneyModal';
 
 interface FarmerDashboardProps {
   currentPage: string;
@@ -22,9 +22,9 @@ interface FarmerDashboardProps {
 const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
   const { user, batches } = useApp();
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showQRModal, setShowQRModal] = useState<any>(null);
   const [scanInput, setScanInput] = useState('');
   const [scanResult, setScanResult] = useState<any>(null);
+  const [selectedBatch, setSelectedBatch] = useState<any>(null);
 
   const userBatches = batches.filter(batch => batch.farmerId === user?.id);
 
@@ -64,6 +64,29 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
     });
   };
 
+  const getBatchJourney = (batch: any) => {
+    const journey = [
+      {
+        stage: 'Farm Origin',
+        handler: user?.name || 'Unknown Farmer',
+        location: batch.location,
+        timestamp: batch.harvestDate,
+        details: `Harvested ${batch.quantity}kg of ${batch.cropType}`
+      }
+    ];
+
+    batch.transfers?.forEach((transfer: any, index: number) => {
+      journey.push({
+        stage: `Transfer ${index + 1}`,
+        handler: transfer.to,
+        location: transfer.location,
+        timestamp: transfer.timestamp,
+        details: `Transferred to ${transfer.to}`
+      });
+    });
+
+    return journey;
+  };
   const handleScan = () => {
     try {
       const data = JSON.parse(scanInput);
@@ -98,6 +121,9 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">My Batches</h3>
+          </div>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -112,33 +138,33 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {userBatches.map((batch) => (
-                <motion.tr
-                  key={batch.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="hover:bg-gray-50"
-                >
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
-                      {batch.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <button
-                      onClick={() => setShowQRModal(batch)}
-                      className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      View QR
-                    </button>
-                  </td>
-                </motion.tr>
+                  <motion.tr
+                    key={batch.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="hover:bg-gray-50"
+                  >
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
+                        {batch.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      <button
+                        onClick={() => setSelectedBatch(batch)}
+                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        View Actions
+                      </button>
+                    </td>
+                  </motion.tr>
               ))}
             </tbody>
           </table>
@@ -183,30 +209,16 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
           </div>
         )}
 
-        {/* QR Modal */}
-        {showQRModal && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowQRModal(null)}
-          >
-            <div
-              className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-lg font-semibold mb-4">Product QR Code - {showQRModal.id}</h3>
-              <div className="text-center">
-                <div className="bg-white p-4 rounded-lg inline-block shadow">
-                  <QRCode value={getBatchQRValue(showQRModal)} size={200} />
-                </div>
-                <div className="mt-4 space-y-2">
-                  <button onClick={() => setShowQRModal(null)} className="w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-50">
-                    Close
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Share this QR with buyers to show product details</p>
-              </div>
-            </div>
-          </div>
+        {/* Journey Modal */}
+        {selectedBatch && (
+          <JourneyModal
+            isOpen={!!selectedBatch}
+            onClose={() => setSelectedBatch(null)}
+            batch={selectedBatch}
+            journey={getBatchJourney(selectedBatch)}
+            qrValue={getBatchQRValue(selectedBatch)}
+            title={`Batch Actions - ${selectedBatch.id}`}
+          />
         )}
       </motion.div>
     );

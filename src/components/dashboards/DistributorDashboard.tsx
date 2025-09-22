@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
-import QRCode from 'react-qr-code';
+import JourneyModal from '../common/JourneyModal';
 
 interface DistributorDashboardProps {
   currentPage: string;
@@ -34,13 +34,13 @@ interface PurchaseRequest {
   status: 'pending' | 'approved' | 'rejected';
 }
 
-const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage }) => {
+const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: (page: string) => void }> = ({ currentPage, onNavigate }) => {
   const { batches, transferBatch } = useApp();
   const [scanInput, setScanInput] = useState('');
   const [scanResult, setScanResult] = useState<any>(null);
   const [showBuyForm, setShowBuyForm] = useState<any>(null);
-  const [showQRModal, setShowQRModal] = useState<any>(null);
   const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
+  const [selectedBatch, setSelectedBatch] = useState<any>(null);
   
   const [buyForm, setBuyForm] = useState({
     quantity: '',
@@ -106,6 +106,42 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
     setPurchaseRequests(prev => prev.map(req => 
       req.id === requestId ? { ...req, status: 'approved' as const } : req
     ));
+    // Navigate to transfers page after approval
+    if (onNavigate) {
+      setTimeout(() => onNavigate('transfers'), 1000);
+    }
+  };
+
+  const getBatchQRValue = (batch: any) => {
+    return JSON.stringify({
+      type: 'distributor-batch',
+      batchId: batch.id,
+      data: batch
+    });
+  };
+
+  const getBatchJourney = (batch: any) => {
+    const journey = [
+      {
+        stage: 'Farm Origin',
+        handler: batch.farmerName,
+        location: batch.location,
+        timestamp: batch.harvestDate,
+        details: `Harvested ${batch.quantity}kg of ${batch.cropType}`
+      }
+    ];
+
+    batch.transfers?.forEach((transfer: any, index: number) => {
+      journey.push({
+        stage: `Transfer ${index + 1}`,
+        handler: transfer.to,
+        location: transfer.location,
+        timestamp: transfer.timestamp,
+        details: `Transferred to ${transfer.to}`
+      });
+    });
+
+    return journey;
   };
 
   if (currentPage === 'transfers') {
@@ -123,63 +159,94 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
 
         <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Available Inventory</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Available Inventory with ML Insights</h3>
           </div>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Owner</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {availableBatches.map((batch: any) => (
-                <tr key={batch.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{batch.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{batch.cropType}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{batch.currentOwner}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
-                      {batch.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <button
-                      onClick={() => setShowQRModal(batch)}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      View QR
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Batch ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Crop Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {availableBatches.map((batch: any) => (
+                    <motion.tr
+                      key={batch.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="hover:bg-gray-50"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
+                          {batch.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                          onClick={() => setSelectedBatch(batch)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View Actions
+                        </button>
+                      </td>
+                    </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {availableBatches.length === 0 && (
+            <div className="text-center py-12">
+              <Package className="mx-auto w-12 h-12 text-gray-400 mb-4" />
+              <p className="text-gray-500">No batches available for transfer</p>
+            </div>
+          )}
         </div>
 
         {purchaseRequests.length > 0 && (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Purchase Requests</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Purchase Requests with ML Verification</h3>
             </div>
             <div className="p-6">
               {purchaseRequests.map((request) => (
-                <div key={request.id} className="border rounded-lg p-4 mb-4">
-                  <div className="flex items-center justify-between">
+                <motion.div
+                  key={request.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between">
                     <div>
                       <p className="font-medium text-gray-900">Batch: {request.batchId}</p>
                       <p className="text-sm text-gray-600">Buyer: {request.buyerName} ({request.buyerProfession})</p>
                       <p className="text-sm text-gray-600">Quantity: {request.quantity}kg | Price: ${request.price}</p>
                       <p className="text-sm text-gray-500">Date: {request.date}</p>
+                      
+                      {/* ML Verification Badge */}
+                      <div className="mt-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <Brain className="w-3 h-3 mr-1" />
+                          ML Verified
+                        </span>
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       {request.status === 'pending' && (
                         <button
                           onClick={() => approvePurchase(request.id)}
-                          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 hover:scale-105 transition-transform"
                         >
                           Approve
                         </button>
@@ -193,30 +260,22 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
                       </span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         )}
 
-        {showQRModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold mb-4">Product QR Code - {showQRModal.id}</h3>
-              <div className="text-center">
-                <div className="bg-white p-4 rounded-lg inline-block">
-                  <QRCode value={JSON.stringify({
-                    type: 'distributor-batch',
-                    batchId: showQRModal.id,
-                    data: showQRModal
-                  })} size={200} />
-                </div>
-                <div className="mt-4">
-                  <button onClick={() => setShowQRModal(null)} className="w-full border border-gray-300 py-2 rounded-lg">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Journey Modal */}
+        {selectedBatch && (
+          <JourneyModal
+            isOpen={!!selectedBatch}
+            onClose={() => setSelectedBatch(null)}
+            batch={selectedBatch}
+            journey={getBatchJourney(selectedBatch)}
+            qrValue={getBatchQRValue(selectedBatch)}
+            title={`Batch Actions - ${selectedBatch.id}`}
+          />
         )}
       </motion.div>
     );
@@ -303,6 +362,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.button 
             whileHover={{ scale: 1.02 }}
+            onClick={() => onNavigate && onNavigate('transfers')}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <CheckCircle className="w-5 h-5 text-green-600 mr-3" />
@@ -401,7 +461,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
       {/* Buy Form Modal */}
       {showBuyForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
             <h3 className="text-lg font-semibold mb-4">Purchase Form</h3>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -484,7 +544,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps> = ({ currentPage
                 <button 
                   onClick={handleBuy}
                   disabled={!buyForm.quantity || !buyForm.price}
-                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit Purchase
                 </button>

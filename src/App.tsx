@@ -44,7 +44,7 @@ function AppContent() {
       case 'farmer':
         return <FarmerDashboard key={pageKey} currentPage={currentPage} />;
       case 'distributor':
-        return <DistributorDashboard key={pageKey} currentPage={currentPage} />;
+        return <DistributorDashboard key={pageKey} currentPage={currentPage} onNavigate={handleNavigate} />;
       case 'consumer':
         return <ConsumerDashboard key={pageKey} currentPage={currentPage} />;
       case 'regulator':

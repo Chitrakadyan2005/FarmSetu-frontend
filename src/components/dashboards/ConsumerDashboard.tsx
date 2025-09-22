@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera } from 'lucide-react';
+import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan, ShoppingCart, Star, Camera, Eye } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
+import JourneyModal from '../common/JourneyModal';
 
 interface ConsumerDashboardProps {
   currentPage: string;
@@ -21,14 +22,105 @@ interface Purchase {
   rating?: number;
 }
 
+// Dummy purchase data
+const dummyPurchases: Purchase[] = [
+  {
+    id: 'P001',
+    batchId: 'BTH001',
+    product: 'Organic Tomatoes',
+    quantity: 2,
+    price: 11.98,
+    date: '2024-01-18',
+    location: 'Oregon, USA',
+    journey: [
+      {
+        stage: 'Farm Origin',
+        handler: 'John Farmer',
+        location: 'California, USA',
+        timestamp: '2024-01-15',
+        details: 'Harvested 100kg of Organic Tomatoes'
+      },
+      {
+        stage: 'Distribution Center',
+        handler: 'Green Valley Distributors',
+        location: 'Nevada, USA',
+        timestamp: '2024-01-16',
+        details: 'Quality checked and packaged for retail'
+      },
+      {
+        stage: 'Retail Store',
+        handler: 'Fresh Market Store',
+        location: 'Oregon, USA',
+        timestamp: '2024-01-17',
+        details: 'Available for consumer purchase'
+      }
+    ],
+    feedback: 'Excellent quality tomatoes! Very fresh and flavorful.',
+    rating: 5
+  },
+  {
+    id: 'P002',
+    batchId: 'BTH002',
+    product: 'Fresh Carrots',
+    quantity: 1,
+    price: 3.49,
+    date: '2024-01-22',
+    location: 'Oregon, USA',
+    journey: [
+      {
+        stage: 'Farm Origin',
+        handler: 'John Farmer',
+        location: 'California, USA',
+        timestamp: '2024-01-20',
+        details: 'Harvested 50kg of Fresh Carrots'
+      },
+      {
+        stage: 'Local Market',
+        handler: 'Farmers Market',
+        location: 'Oregon, USA',
+        timestamp: '2024-01-21',
+        details: 'Direct from farm to market'
+      }
+    ],
+    feedback: 'Good quality carrots, though could be a bit fresher.',
+    rating: 4
+  },
+  {
+    id: 'P003',
+    batchId: 'BTH003',
+    product: 'Organic Lettuce',
+    quantity: 3,
+    price: 8.97,
+    date: '2024-01-25',
+    location: 'Oregon, USA',
+    journey: [
+      {
+        stage: 'Farm Origin',
+        handler: 'Green Leaf Farm',
+        location: 'Washington, USA',
+        timestamp: '2024-01-23',
+        details: 'Harvested organic lettuce heads'
+      },
+      {
+        stage: 'Distribution',
+        handler: 'Organic Distributors Inc',
+        location: 'Oregon, USA',
+        timestamp: '2024-01-24',
+        details: 'Temperature controlled transport'
+      }
+    ],
+    rating: 3
+  }
+];
+
 const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) => {
   const { getBatchById } = useApp();
   const [scanInput, setScanInput] = useState('');
   const [scannedBatch, setScannedBatch] = useState<ProduceBatch | null>(null);
   const [scanResult, setScanResult] = useState<'found' | 'not-found' | null>(null);
   const [showBuyForm, setShowBuyForm] = useState<any>(null);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const [showJourneyModal, setShowJourneyModal] = useState<Purchase | null>(null);
+  const [purchases, setPurchases] = useState<Purchase[]>(dummyPurchases);
+  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   
   const [buyForm, setBuyForm] = useState({
@@ -90,30 +182,13 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
     console.log('Blockchain entry created:', purchase);
   };
 
-  const getJourneySteps = (batch: ProduceBatch) => {
-    const steps = [
-      {
-        title: 'Farm Origin',
-        description: batch.farmerName,
-        location: batch.location,
-        date: batch.harvestDate,
-        icon: '🌱',
-        status: 'completed'
-      }
-    ];
-
-    batch.transfers?.forEach((transfer, index) => {
-      steps.push({
-        title: `Transfer ${index + 1}`,
-        description: transfer.to,
-        location: transfer.location,
-        date: transfer.timestamp,
-        icon: index === batch.transfers.length - 1 ? '🏪' : '🚚',
-        status: 'completed'
-      });
+  const getPurchaseQRValue = (purchase: Purchase) => {
+    return JSON.stringify({
+      type: 'consumer-purchase',
+      purchaseId: purchase.id,
+      batchId: purchase.batchId,
+      data: purchase
     });
-
-    return steps;
   };
 
   const openCamera = () => {
@@ -132,95 +207,140 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="text-center mb-8">
+        <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h2>
           <p className="text-gray-600">View your purchase history and product journeys</p>
         </div>
 
         {/* Purchase History */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Purchase History</h3>
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Purchase History</h3>
+          </div>
           
           {purchases.length > 0 ? (
-            <div className="space-y-4">
-              {purchases.map((purchase) => (
-                <div key={purchase.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h4 className="font-medium text-gray-900">{purchase.product}</h4>
-                      <p className="text-sm text-gray-600">
-                        Batch: {purchase.batchId} | {purchase.quantity}kg | ${purchase.price}
-                      </p>
-                      <p className="text-sm text-gray-500">Purchased: {purchase.date}</p>
-                    </div>
-                    <button
-                      onClick={() => setShowJourneyModal(purchase)}
-                      className="text-blue-600 hover:text-blue-700 text-sm"
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purchase ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Batch ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {purchases.map((purchase) => (
+                    <motion.tr
+                      key={purchase.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="hover:bg-gray-50"
                     >
-                      View Journey
-                    </button>
-                  </div>
-                  
-                  {purchase.feedback && (
-                    <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{purchase.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{purchase.product}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{purchase.batchId}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{purchase.quantity} kg</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">${purchase.price}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{new Date(purchase.date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">
+                        {purchase.rating ? (
+                          <div className="flex items-center">
+                            <div className="flex">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star key={star} className={`w-4 h-4 ${star <= (purchase.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-600 ml-1">({purchase.rating}/5)</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500">No rating</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                          onClick={() => setSelectedPurchase(purchase)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center hover:underline"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View Actions
+                        </button>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No additional purchases yet. Visit the main dashboard to scan more products and make purchases.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Feedback Section for purchases with feedback */}
+        {purchases.some(p => p.feedback) && (
+          <div className="bg-white rounded-xl shadow-md overflow-hidden mt-8">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Purchase Feedback</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {purchases.filter(p => p.feedback).map((purchase) => (
+                  <motion.div
+                    key={purchase.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{purchase.product}</h4>
+                        <p className="text-sm text-gray-600">Purchase ID: {purchase.id} | {purchase.date}</p>
+                      </div>
+                      <div className="flex items-center">
                         <div className="flex">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <Star key={star} className={`w-4 h-4 ${star <= (purchase.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
                           ))}
                         </div>
-                        <span className="text-sm text-gray-600">({purchase.rating}/5)</span>
+                        <span className="text-sm text-gray-600 ml-1">({purchase.rating}/5)</span>
                       </div>
-                      <p className="text-sm text-gray-700">{purchase.feedback}</p>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No purchases yet. Visit the main dashboard to scan products and make purchases.</p>
-            </div>
-          )}
-        </div>
-
-        {/* Journey Modal */}
-        {showJourneyModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
-              <h3 className="text-lg font-semibold mb-4">Farm-to-Fork Journey: {showJourneyModal.product}</h3>
-              
-              <div className="space-y-4">
-                {showJourneyModal.journey.map((step: any, index: number) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
-                      {step.stage?.toLowerCase().includes('farm') ? '🌱' : 
-                       step.stage?.toLowerCase().includes('distribution') ? '🚚' : '🏪'}
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-gray-900">{step.stage}</h4>
-                        <span className="text-sm text-gray-500">
-                          {new Date(step.timestamp).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-gray-600">{step.handler}</p>
-                      <p className="text-sm text-gray-500 flex items-center">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {step.location}
-                      </p>
-                      <p className="text-sm text-gray-700 mt-1">{step.details}</p>
-                    </div>
-                  </div>
+                    <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{purchase.feedback}</p>
+                  </motion.div>
                 ))}
               </div>
-              
-              <button onClick={() => setShowJourneyModal(null)} className="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg">Close</button>
             </div>
           </div>
+        )}
+
+        {/* Journey Modal */}
+        {selectedPurchase && (
+          <JourneyModal
+            isOpen={!!selectedPurchase}
+            onClose={() => setSelectedPurchase(null)}
+            batch={{
+              id: selectedPurchase.batchId,
+              cropType: selectedPurchase.product,
+              price: selectedPurchase.price / selectedPurchase.quantity,
+              quantity: selectedPurchase.quantity,
+              harvestDate: selectedPurchase.date,
+              location: selectedPurchase.location
+            }}
+            journey={selectedPurchase.journey}
+            qrValue={getPurchaseQRValue(selectedPurchase)}
+            title={`Purchase Actions - ${selectedPurchase.product}`}
+          />
         )}
       </motion.div>
     );
@@ -306,7 +426,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
       >
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <QrCode className="w-5 h-5 mr-2" />
-          Product Scanner
+          Product Scanner with ML Insights
         </h3>
         <p className="text-gray-600 mb-4">Scan QR codes on food packages to trace their complete journey and make purchases.</p>
         <div className="flex space-x-2 items-center">
@@ -332,6 +452,21 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             <Search className="w-4 h-4" />
           </button>
         </div>
+        
+        {/* Show ML insights when a product is scanned */}
+        {scannedBatch && scanResult === 'found' && (
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <h4 className="font-semibold text-gray-900 mb-2">Product Details</h4>
+              <div className="text-sm space-y-1">
+                <p><span className="font-medium">Product:</span> {scannedBatch.cropType}</p>
+                <p><span className="font-medium">Batch ID:</span> {scannedBatch.id}</p>
+                <p><span className="font-medium">Farmer:</span> {scannedBatch.farmerName}</p>
+                <p><span className="font-medium">Location:</span> {scannedBatch.location}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </motion.div>
 
       {/* Feature Cards */}
@@ -349,29 +484,13 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 ml-3">Product Scanner</h3>
           </div>
-          <p className="text-gray-600">Scan QR codes on food packages to trace their complete journey and make purchases.</p>
+          <p className="text-gray-600">Scan QR codes with ML-powered quality and authenticity verification.</p>
         </motion.div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.6 }}
-          whileHover={{ scale: 1.02 }}
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
-        >
-          <div className="flex items-center mb-4">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Shield className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 ml-3">Authenticity</h3>
-          </div>
-          <p className="text-gray-600">Verify the authenticity and quality of organic and premium food products.</p>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.7 }}
           whileHover={{ scale: 1.02 }}
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
