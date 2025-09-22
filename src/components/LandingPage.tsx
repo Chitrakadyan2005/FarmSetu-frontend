@@ -18,7 +18,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       {/* Hero Section */}
       <header
   className="relative bg-cover bg-center h-screen"
-  style={{ backgroundImage: "url('https://images.pexels.com/photos/1595104/pexels-photo-1595104.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop')" }}
+  style={{ backgroundImage: "url('../landingpage/wallpaper.jpg')" }}
 >
   {/* Overlay for better readability */}
   <div className="absolute inset-0 bg-black/30"></div>
