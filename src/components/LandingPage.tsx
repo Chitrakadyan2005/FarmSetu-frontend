@@ -30,18 +30,44 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       <img 
         src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/e729fb74-4401-4bed-8c19-fc292200680a.png" 
         alt="FarmSetu Logo" 
-        className="mx-auto mb-8 w-32 sm:w-48 md:w-56"
+        className="mx-auto mb-8 w-32 sm:w-48 md:w-56 drop-shadow-2xl"
+        style={{ 
+          filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.3))',
+        }}
         loading="eager"
         fetchpriority="high"
       />
 
-      <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ fontFamily: "'Playfair Display', serif", textShadow: '2px 2px 0px rgba(0,0,0,0.8), -1px -1px 0px rgba(0,0,0,0.8), 1px -1px 0px rgba(0,0,0,0.8), -1px 1px 0px rgba(0,0,0,0.8)' }}>
-        <span className="text-green-400 drop-shadow-lg" style={{ WebkitTextStroke: '1px rgba(0,0,0,0.5)' }}>Linking Farm to Fork</span>
+      <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ 
+        fontFamily: "'Playfair Display', serif", 
+        textShadow: '3px 3px 6px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
+        letterSpacing: '0.02em'
+      }}>
+        <span className="text-green-300 drop-shadow-2xl" style={{ 
+          background: 'linear-gradient(135deg, #86efac 0%, #22c55e 50%, #16a34a 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.4))'
+        }}>Linking Farm to Fork</span>
         <br />
-        <span className="text-3xl sm:text-4xl text-white drop-shadow-lg" style={{ fontFamily: "'Inter', sans-serif", fontWeight: '300', letterSpacing: '0.02em', WebkitTextStroke: '0.5px rgba(0,0,0,0.7)' }}>Transparent Food Supply</span>
+        <span className="text-3xl sm:text-4xl text-white drop-shadow-2xl" style={{ 
+          fontFamily: "'Inter', sans-serif", 
+          fontWeight: '200', 
+          letterSpacing: '0.08em',
+          textShadow: '2px 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.6)',
+          filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.1))'
+        }}>Transparent Food Supply</span>
       </h1>
       
-      <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-100 drop-shadow-md" style={{ fontFamily: "'Inter', sans-serif", fontWeight: '400', lineHeight: '1.6', textShadow: '1px 1px 0px rgba(0,0,0,0.8), -1px -1px 0px rgba(0,0,0,0.8), 1px -1px 0px rgba(0,0,0,0.8), -1px 1px 0px rgba(0,0,0,0.8)', WebkitTextStroke: '0.3px rgba(0,0,0,0.5)' }}>
+      <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50 drop-shadow-lg" style={{ 
+        fontFamily: "'Inter', sans-serif", 
+        fontWeight: '300', 
+        lineHeight: '1.7',
+        letterSpacing: '0.01em',
+        textShadow: '2px 2px 6px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.5)',
+        filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.1))'
+      }}>
         Track your food from farm to fork with blockchain technology.
         Ensuring transparency, authenticity, and trust in every bite.
       </p>
@@ -50,7 +76,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         <button
           onClick={() => onNavigate("login")}
           className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-500"
-          style={{ fontFamily: "'Inter', sans-serif", textShadow: '1px 1px 0px rgba(0,0,0,0.5)' }}
+          style={{ 
+            fontFamily: "'Inter', sans-serif",
+            backdropFilter: 'blur(10px)',
+            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(22, 163, 74, 0.9) 100%)',
+            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          }}
         >
           Get Started
           <ChevronRight className="ml-2 w-5 h-5" />
@@ -58,7 +89,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         <button 
           onClick={scrollToHowItWorks}
           className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-          style={{ fontFamily: "'Inter', sans-serif", textShadow: '1px 1px 0px rgba(0,0,0,0.7)' }}
+          style={{ 
+            fontFamily: "'Inter', sans-serif",
+            backdropFilter: 'blur(10px)',
+            background: 'rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          }}
         >
           Learn More
         </button>
