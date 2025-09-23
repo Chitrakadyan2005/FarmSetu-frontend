@@ -455,5 +455,3 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
 };
 
 export default RetailerDashboard;
-
-export default RetailerDashboard
