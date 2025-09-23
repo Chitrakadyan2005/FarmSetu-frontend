@@ -32,10 +32,10 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate }) => {
           { id: 'scanner', label: 'My Purchases', icon: ShoppingCart },
           { id: 'profile', label: 'Profile', icon: UserIcon }
         ];
-      case 'regulator':
+      case 'retailer':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: Home },
-          { id: 'audit', label: 'Audit', icon: Shield },
+          { id: 'inventory', label: 'Inventory', icon: Package },
           { id: 'profile', label: 'Profile', icon: UserIcon }
         ];
       default:

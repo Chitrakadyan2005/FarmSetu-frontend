@@ -68,7 +68,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                   <option value="farmer">Farmer</option>
                   <option value="distributor">Distributor/Retailer</option>
                   <option value="consumer">Consumer</option>
-                  <option value="regulator">Regulator/Auditor</option>
+                  <option value="retailer">Retailer</option>
                 </select>
               </div>
             </div>
@@ -146,10 +146,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                 Demo Consumer
               </button>
               <button
-                onClick={() => handleDemoLogin('regulator', 'regulator@demo.com')}
+                onClick={() => handleDemoLogin('retailer', 'retailer@demo.com')}
                 className="bg-purple-100 text-purple-700 px-3 py-2 rounded font-medium hover:bg-purple-200 transition-colors"
               >
-                Demo Regulator
+                Demo Retailer
               </button>
             </div>
           </div>

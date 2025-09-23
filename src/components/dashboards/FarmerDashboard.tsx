@@ -110,6 +110,23 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
         </div>
 
         <div className="flex items-center justify-between mb-6">
+          {/* Search */}
+          <div className="flex-1 mr-4">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="Search batches..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              <button
+                className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Search
+              </button>
+            </div>
+          </div>
+          
           <button
             onClick={() => setShowAddForm(true)}
             className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 hover:scale-105 transition-transform flex items-center"

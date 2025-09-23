@@ -230,7 +230,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   className="bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors text-center"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  Regulator
+                  Retailer
                 </button>
               </div>
             </div>

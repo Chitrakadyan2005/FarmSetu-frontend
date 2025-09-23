@@ -157,9 +157,30 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
           <p className="text-gray-600">Manage your inventory and transfers</p>
         </div>
 
+        {/* Search */}
+        <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Search className="w-5 h-5 mr-2 text-blue-600" />
+            Search Batches
+          </h3>
+          <div className="flex space-x-4">
+            <input
+              type="text"
+              placeholder="Enter Batch ID to search"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center"
+            >
+              <Search className="w-4 h-4 mr-2" />
+              Search
+            </button>
+          </div>
+        </div>
+
         <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Available Inventory with ML Insights</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Available Inventory</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -289,8 +310,10 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Distributor Dashboard</h2>
-        <p className="text-gray-600">Manage supply chain transfers and logistics</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          Welcome back, Mike Distributor! 🚚
+        </h2>
+        <p className="text-gray-600 mb-8">Here's an overview of your distribution activity.</p>
       </div>
 
       {/* Stats Cards */}
