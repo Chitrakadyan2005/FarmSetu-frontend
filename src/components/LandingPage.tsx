@@ -70,11 +70,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               letterSpacing: '-0.02em',
               fontWeight: '800'
             }}>
-              <span className="text-green-400" style={{ 
+              {/* <span className="text-green-400" style={{ 
                 textShadow: '0 4px 8px rgba(0,0,0,0.4)'
-              }}>FarmSetu</span>
+              }}>FarmSetu</span> */}
               <br />
-              <span className="text-3xl sm:text-4xl text-white" style={{ 
+              <span className="text-3xl sm:text-4xl text-green-400" style={{ 
                 fontFamily: "'Playfair Display', serif", 
                 fontWeight: '700', 
                 letterSpacing: '0.08em',
@@ -89,7 +89,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               letterSpacing: '0.01em',
               textShadow: '0 2px 4px rgba(0,0,0,0.6)'
             }}>
-              Track your food from farm to fork with blockchain technology.
               Ensuring transparency, authenticity, and trust in every bite.
             </p>
 
