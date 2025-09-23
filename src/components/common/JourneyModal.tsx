@@ -186,15 +186,15 @@ const JourneyModal: React.FC<JourneyModalProps> = ({
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="font-medium text-blue-700">Current Price:</span>
-                      <span className="ml-2 text-blue-600">${batch.price}/kg</span>
+                      <span className="ml-2 text-blue-600">₹{batch.price}/kg</span>
                     </div>
                     <div>
                       <span className="font-medium text-blue-700">Suggested Price:</span>
-                      <span className="ml-2 text-blue-600 font-semibold">${insights.pricing.suggestedPrice}/kg</span>
+                      <span className="ml-2 text-blue-600 font-semibold">₹{insights.pricing.suggestedPrice}/kg</span>
                     </div>
                   </div>
                   <div className="mt-2 text-sm text-blue-700">
-                    <span className="font-medium">Price Range:</span> ${insights.pricing.priceRange.min} - ${insights.pricing.priceRange.max}/kg
+                    <span className="font-medium">Price Range:</span> ₹{insights.pricing.priceRange.min} - ₹{insights.pricing.priceRange.max}/kg
                   </div>
                   <div className="mt-1 text-sm text-blue-700">
                     <span className="font-medium">Market Trend:</span> 

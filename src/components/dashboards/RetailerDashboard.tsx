@@ -43,8 +43,8 @@ const dummyInventory: InventoryItem[] = [
     batchId: 'BTH001',
     product: 'Organic Tomatoes',
     quantity: 45,
-    price: 5.99,
-    supplier: 'Green Valley Distributors',
+    price: 45,
+    supplier: 'Mumbai Fresh Distributors',
     receivedDate: '2024-01-17',
     expiryDate: '2024-01-24',
     status: 'in-stock'
@@ -54,8 +54,8 @@ const dummyInventory: InventoryItem[] = [
     batchId: 'BTH002',
     product: 'Fresh Carrots',
     quantity: 8,
-    price: 3.49,
-    supplier: 'John Farmer',
+    price: 25,
+    supplier: 'Rajesh Sharma',
     receivedDate: '2024-01-22',
     expiryDate: '2024-01-29',
     status: 'low-stock'
@@ -65,8 +65,8 @@ const dummyInventory: InventoryItem[] = [
     batchId: 'BTH003',
     product: 'Organic Lettuce',
     quantity: 25,
-    price: 2.99,
-    supplier: 'Green Leaf Farm',
+    price: 25,
+    supplier: 'Haryana Green Farm',
     receivedDate: '2024-01-25',
     expiryDate: '2024-01-30',
     status: 'in-stock'
@@ -120,22 +120,22 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
     return [
       {
         stage: 'Farm Origin',
-        handler: 'John Farmer',
-        location: 'California, USA',
+        handler: 'Rajesh Sharma',
+        location: 'Punjab, India',
         timestamp: '2024-01-15',
         details: `Harvested ${item.product}`
       },
       {
         stage: 'Distribution Center',
         handler: item.supplier,
-        location: 'Nevada, USA',
+        location: 'Maharashtra, India',
         timestamp: '2024-01-16',
         details: 'Quality checked and packaged'
       },
       {
         stage: 'Retail Store',
-        handler: 'Fresh Market Store',
-        location: 'Oregon, USA',
+        handler: 'Kirana Fresh Store',
+        location: 'Mumbai, India',
         timestamp: item.receivedDate,
         details: 'Received and stocked for sale'
       }
@@ -207,7 +207,7 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.product}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.batchId}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.quantity} units</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">${item.price}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{item.price}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.supplier}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>
@@ -267,7 +267,7 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
     >
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, Store Retailer! 🏪
+          Welcome back, Suresh Store! 🏪
         </h2>
         <p className="text-gray-600 mb-8">Here's an overview of your store activity.</p>
       </div>

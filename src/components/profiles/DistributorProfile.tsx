@@ -18,12 +18,12 @@ const DistributorProfile: React.FC = () => {
   const { user } = useApp();
   const [profile, setProfile] = useState<DistributorProfileData>({
     name: user?.name || '',
-    businessName: 'Green Valley Distributors',
-    location: 'Nevada, USA',
-    contact: '+1 555-0202',
+    businessName: 'Mumbai Fresh Distributors',
+    location: 'Maharashtra, India',
+    contact: '+91 98765-43211',
     transfersHandled: ['Organic Tomatoes', 'Fresh Carrots', 'Bell Peppers', 'Organic Lettuce'],
     stockUnits: 320,
-    connectedFarmers: ['John Farmer']
+    connectedFarmers: ['Rajesh Sharma']
   });
 
   const [qrSeed, setQrSeed] = useState<string>(uuidv4());

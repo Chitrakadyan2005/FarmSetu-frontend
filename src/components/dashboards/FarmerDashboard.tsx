@@ -166,7 +166,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                     <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                         {batch.status}
@@ -305,7 +305,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Value</p>
               <p className="text-2xl font-bold text-gray-900">
-                ${userBatches.reduce((sum, batch) => sum + (batch.price * batch.quantity), 0).toFixed(2)}
+                ₹{userBatches.reduce((sum, batch) => sum + (batch.price * batch.quantity), 0).toFixed(2)}
               </p>
             </div>
           </div>

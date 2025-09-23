@@ -29,28 +29,28 @@ const dummyPurchases: Purchase[] = [
     batchId: 'BTH001',
     product: 'Organic Tomatoes',
     quantity: 2,
-    price: 11.98,
+    price: 90,
     date: '2024-01-18',
-    location: 'Oregon, USA',
+    location: 'Mumbai, India',
     journey: [
       {
         stage: 'Farm Origin',
-        handler: 'John Farmer',
-        location: 'California, USA',
+        handler: 'Rajesh Sharma',
+        location: 'Punjab, India',
         timestamp: '2024-01-15',
         details: 'Harvested 100kg of Organic Tomatoes'
       },
       {
         stage: 'Distribution Center',
-        handler: 'Green Valley Distributors',
-        location: 'Nevada, USA',
+        handler: 'Mumbai Fresh Distributors',
+        location: 'Maharashtra, India',
         timestamp: '2024-01-16',
         details: 'Quality checked and packaged for retail'
       },
       {
         stage: 'Retail Store',
-        handler: 'Fresh Market Store',
-        location: 'Oregon, USA',
+        handler: 'Kirana Fresh Store',
+        location: 'Mumbai, India',
         timestamp: '2024-01-17',
         details: 'Available for consumer purchase'
       }
@@ -63,21 +63,21 @@ const dummyPurchases: Purchase[] = [
     batchId: 'BTH002',
     product: 'Fresh Carrots',
     quantity: 1,
-    price: 3.49,
+    price: 25,
     date: '2024-01-22',
-    location: 'Oregon, USA',
+    location: 'Mumbai, India',
     journey: [
       {
         stage: 'Farm Origin',
-        handler: 'John Farmer',
-        location: 'California, USA',
+        handler: 'Rajesh Sharma',
+        location: 'Punjab, India',
         timestamp: '2024-01-20',
         details: 'Harvested 50kg of Fresh Carrots'
       },
       {
         stage: 'Local Market',
-        handler: 'Farmers Market',
-        location: 'Oregon, USA',
+        handler: 'Local Mandi',
+        location: 'Mumbai, India',
         timestamp: '2024-01-21',
         details: 'Direct from farm to market'
       }
@@ -90,21 +90,21 @@ const dummyPurchases: Purchase[] = [
     batchId: 'BTH003',
     product: 'Organic Lettuce',
     quantity: 3,
-    price: 8.97,
+    price: 75,
     date: '2024-01-25',
-    location: 'Oregon, USA',
+    location: 'Mumbai, India',
     journey: [
       {
         stage: 'Farm Origin',
-        handler: 'Green Leaf Farm',
-        location: 'Washington, USA',
+        handler: 'Haryana Green Farm',
+        location: 'Haryana, India',
         timestamp: '2024-01-23',
         details: 'Harvested organic lettuce heads'
       },
       {
         stage: 'Distribution',
-        handler: 'Organic Distributors Inc',
-        location: 'Oregon, USA',
+        handler: 'Delhi Organic Distributors',
+        location: 'Delhi, India',
         timestamp: '2024-01-24',
         details: 'Temperature controlled transport'
       }
@@ -269,7 +269,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
                       <td className="px-6 py-4 text-sm text-gray-900">{purchase.product}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{purchase.batchId}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{purchase.quantity} kg</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">${purchase.price}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">₹{purchase.price}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{new Date(purchase.date).toLocaleDateString()}</td>
                       <td className="px-6 py-4">
                         {purchase.rating ? (
@@ -376,7 +376,7 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
     >
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, Sarah Consumer! 🛒
+          Welcome back, Anita Verma! 🛒
         </h2>
         <p className="text-gray-600 mb-8">Here's an overview of your food journey discoveries.</p>
       </div>

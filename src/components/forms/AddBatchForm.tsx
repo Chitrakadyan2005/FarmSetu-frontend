@@ -108,7 +108,7 @@ const AddBatchForm: React.FC<AddBatchFormProps> = ({ onSuccess }) => {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           <DollarSign className="w-4 h-4 inline mr-1" />
-          Price per kg ($)
+          Price per kg (₹)
         </label>
         <input
           type="number"
@@ -134,7 +134,7 @@ const AddBatchForm: React.FC<AddBatchFormProps> = ({ onSuccess }) => {
           value={formData.location}
           onChange={handleChange}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          placeholder="Enter farm location (e.g., California, USA)"
+          placeholder="Enter farm location (e.g., Punjab, India)"
           required
         />
       </div>

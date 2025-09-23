@@ -16,10 +16,10 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 // Mock users data
 const mockUsers = [
-  { id: '1', name: 'John Farmer', email: 'farmer@demo.com', role: 'farmer' as const },
-  { id: '2', name: 'Mike Distributor', email: 'distributor@demo.com', role: 'distributor' as const },
-  { id: '3', name: 'Sarah Consumer', email: 'consumer@demo.com', role: 'consumer' as const },
-  { id: '4', name: 'Store Retailer', email: 'retailer@demo.com', role: 'retailer' as const },
+  { id: '1', name: 'Rajesh Sharma', email: 'farmer@demo.com', role: 'farmer' as const },
+  { id: '2', name: 'Priya Distributors', email: 'distributor@demo.com', role: 'distributor' as const },
+  { id: '3', name: 'Anita Verma', email: 'consumer@demo.com', role: 'consumer' as const },
+  { id: '4', name: 'Suresh Store', email: 'retailer@demo.com', role: 'retailer' as const },
 ];
 
 // Mock initial batches
@@ -29,19 +29,19 @@ const initialBatches: ProduceBatch[] = [
     cropType: 'Organic Tomatoes',
     harvestDate: '2024-01-15',
     quantity: 100,
-    price: 5.99,
+    price: 45,
     farmerId: '1',
-    farmerName: 'John Farmer',
+    farmerName: 'Rajesh Sharma',
     status: 'distributed',
-    currentOwner: 'Green Valley Distributors',
-    location: 'California, USA',
+    currentOwner: 'Mumbai Fresh Distributors',
+    location: 'Punjab, India',
     transfers: [
       {
         id: 'T1',
-        from: 'John Farmer',
-        to: 'Green Valley Distributors',
+        from: 'Rajesh Sharma',
+        to: 'Mumbai Fresh Distributors',
         timestamp: '2024-01-16T10:00:00Z',
-        location: 'California, USA',
+        location: 'Punjab, India',
         status: 'completed'
       }
     ]
@@ -51,12 +51,12 @@ const initialBatches: ProduceBatch[] = [
     cropType: 'Fresh Carrots',
     harvestDate: '2024-01-20',
     quantity: 50,
-    price: 3.49,
+    price: 25,
     farmerId: '1',
-    farmerName: 'John Farmer',
+    farmerName: 'Rajesh Sharma',
     status: 'harvested',
-    currentOwner: 'John Farmer',
-    location: 'California, USA',
+    currentOwner: 'Rajesh Sharma',
+    location: 'Punjab, India',
     transfers: []
   }
 ];

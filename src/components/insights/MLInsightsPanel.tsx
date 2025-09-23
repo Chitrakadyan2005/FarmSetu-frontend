@@ -73,10 +73,10 @@ const MLInsightsPanel: React.FC<MLInsightsPanelProps> = ({ insights, className =
             </div>
           </div>
           <div className="text-sm font-semibold text-green-600">
-            ${insights.pricing.suggestedPrice}/kg
+            ₹{insights.pricing.suggestedPrice}/kg
           </div>
           <div className="text-xs text-gray-600">
-            Range: ${insights.pricing.priceRange.min} - ${insights.pricing.priceRange.max}
+            Range: ₹{insights.pricing.priceRange.min} - ₹{insights.pricing.priceRange.max}
           </div>
         </div>
 

@@ -15,8 +15,8 @@ const ConsumerProfile: React.FC = () => {
   const { user } = useApp();
   const [profile, setProfile] = useState<ConsumerProfileData>({
     name: user?.name || '',
-    location: 'Oregon, USA',
-    contact: '+1 555-0404',
+    location: 'Mumbai, India',
+    contact: '+91 98765-43212',
     preferences: ['Organic', 'Local Produce']
   });
 
