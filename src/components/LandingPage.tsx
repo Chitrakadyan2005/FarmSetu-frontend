@@ -16,7 +16,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
-      <header className="relative h-[85vh] overflow-hidden">
+      <header className="relative h-screen overflow-hidden">
         {/* Video Background */}
         <video
           autoPlay
@@ -108,11 +108,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               </button>
               <button 
                 onClick={scrollToHowItWorks}
-                className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:bg-opacity-20 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 style={{ 
                   fontFamily: "'Poppins', sans-serif",
-                  backdropFilter: 'blur(5px)',
-                  background: 'rgba(255, 255, 255, 0)',
+                  backdropFilter: 'blur(10px)',
+                  background: 'rgba(255, 255, 255, 0.1)',
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                 }}
               >
