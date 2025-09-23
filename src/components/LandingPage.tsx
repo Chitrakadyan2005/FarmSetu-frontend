@@ -228,7 +228,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 </button>
                 <button
                   onClick={() => onNavigate('login')}
-                  className="bg-orange-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-orange-700 transition-colors text-center"
+                  className="bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors text-center"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   Retailer

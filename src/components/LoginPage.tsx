@@ -147,7 +147,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
               </button>
               <button
                 onClick={() => handleDemoLogin('retailer', 'retailer@demo.com')}
-                className="bg-orange-100 text-orange-700 px-3 py-2 rounded font-medium hover:bg-orange-200 transition-colors"
+                className="bg-purple-100 text-purple-700 px-3 py-2 rounded font-medium hover:bg-purple-200 transition-colors"
               >
                 Demo Retailer
               </button>
