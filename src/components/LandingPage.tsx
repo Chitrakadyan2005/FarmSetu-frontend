@@ -23,21 +23,34 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          preload="auto"
         >
           <source src="/landingpage/background-video.mp4" type="video/mp4" />
           {/* Fallback image if video fails to load */}
-          <img 
-            src="/landingpage/wallpaper.jpg" 
-            alt="Background" 
-            className="absolute inset-0 w-full h-full object-cover"
-          />
         </video>
         
+        {/* Fallback image if video fails to load */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center z-0"
+          style={{ 
+            backgroundImage: 'url(/landingpage/wallpaper.jpg)',
+            display: 'none' 
+          }}
+          onError={() => {
+            const video = document.querySelector('video');
+            const fallback = document.querySelector('[style*="background-image"]') as HTMLElement;
+            if (video && fallback) {
+              video.style.display = 'none';
+              fallback.style.display = 'block';
+            }
+          }}
+        ></div>
+        
         {/* Overlay for better readability */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center z-10">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center z-20">
           <div className="text-center text-white w-full">
             
             {/* Logo */}
