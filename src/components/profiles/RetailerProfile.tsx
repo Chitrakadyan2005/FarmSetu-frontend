@@ -1,22 +1,22 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import QRCode from 'react-qr-code';
-import { Download, QrCode, User, MapPin, Phone, Building2 } from 'lucide-react';
+import { Download, QrCode, User, MapPin, Phone, Store } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
-interface RegulatorProfileData {
+interface RetailerProfileData {
   name: string;
-  dept: string;
+  storeName: string;
   location: string;
   contact: string;
 }
 
-const RegulatorProfile: React.FC = () => {
+const RetailerProfile: React.FC = () => {
   const { user } = useApp();
-  const [profile, setProfile] = useState<RegulatorProfileData>({
+  const [profile, setProfile] = useState<RetailerProfileData>({
     name: user?.name || '',
-    dept: 'Food Safety Department',
-    location: 'Washington, USA',
+    storeName: 'Fresh Market Store',
+    location: 'Oregon, USA',
     contact: '+1 555-0303'
   });
 
@@ -24,19 +24,19 @@ const RegulatorProfile: React.FC = () => {
 
   const qrValue = useMemo(() => (
     JSON.stringify({ 
-      type: 'regulator-profile', 
+      type: 'retailer-profile', 
       userId: user?.id, 
       seed: qrSeed, 
       data: { 
         name: profile.name, 
-        dept: profile.dept,
+        storeName: profile.storeName,
         location: profile.location,
         contact: profile.contact
       } 
     })
   ), [qrSeed, user?.id, profile]);
 
-  const handleUpdate = (updates: Partial<RegulatorProfileData>) => {
+  const handleUpdate = (updates: Partial<RetailerProfileData>) => {
     setProfile(prev => ({ ...prev, ...updates }));
     setQrSeed(uuidv4());
   };
@@ -61,7 +61,7 @@ const RegulatorProfile: React.FC = () => {
       const pngUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
       a.href = pngUrl;
-      a.download = `regulator-profile-${user?.id}.png`;
+      a.download = `retailer-profile-${user?.id}.png`;
       a.click();
     };
     img.src = url;
@@ -70,23 +70,23 @@ const RegulatorProfile: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Regulator Profile</h2>
-        <p className="text-gray-600">Manage your regulatory information and credentials</p>
+        <h2 className="text-2xl font-bold text-gray-900">Retailer Profile</h2>
+        <p className="text-gray-600">Manage your store information and credentials</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Details */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Regulator Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Store Information</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-600 mb-1 flex items-center"><User className="w-4 h-4 mr-2"/>Name</label>
                 <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.name} onChange={(e) => handleUpdate({ name: e.target.value })}/>
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1 flex items-center"><Building2 className="w-4 h-4 mr-2"/>Department</label>
-                <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.dept} onChange={(e) => handleUpdate({ dept: e.target.value })}/>
+                <label className="block text-sm text-gray-600 mb-1 flex items-center"><Store className="w-4 h-4 mr-2"/>Store Name</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.storeName} onChange={(e) => handleUpdate({ storeName: e.target.value })}/>
               </div>
               <div>
                 <label className="block text-sm text-gray-600 mb-1 flex items-center"><MapPin className="w-4 h-4 mr-2"/>Location</label>
@@ -114,7 +114,7 @@ const RegulatorProfile: React.FC = () => {
                 <Download className="w-4 h-4 mr-1"/>Download QR
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Share this QR for identity verification</p>
+            <p className="text-xs text-gray-500 mt-2">Share this QR for store verification</p>
           </div>
         </div>
       </div>
@@ -122,4 +122,4 @@ const RegulatorProfile: React.FC = () => {
   );
 };
 
-export default RegulatorProfile;
+export default RetailerProfile;

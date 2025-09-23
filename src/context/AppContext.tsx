@@ -19,7 +19,7 @@ const mockUsers = [
   { id: '1', name: 'John Farmer', email: 'farmer@demo.com', role: 'farmer' as const },
   { id: '2', name: 'Mike Distributor', email: 'distributor@demo.com', role: 'distributor' as const },
   { id: '3', name: 'Sarah Consumer', email: 'consumer@demo.com', role: 'consumer' as const },
-  { id: '4', name: 'Admin Regulator', email: 'regulator@demo.com', role: 'regulator' as const },
+  { id: '4', name: 'Store Retailer', email: 'retailer@demo.com', role: 'retailer' as const },
 ];
 
 // Mock initial batches

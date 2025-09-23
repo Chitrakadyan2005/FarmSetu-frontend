@@ -6,11 +6,11 @@ import LoginPage from './components/LoginPage';
 import FarmerDashboard from './components/dashboards/FarmerDashboard';
 import DistributorDashboard from './components/dashboards/DistributorDashboard';
 import ConsumerDashboard from './components/dashboards/ConsumerDashboard';
-import RegulatorDashboard from './components/dashboards/RegulatorDashboard';
+import RetailerDashboard from './components/dashboards/RetailerDashboard';
 import FarmerProfile from './components/profiles/FarmerProfile';
 import DistributorProfile from './components/profiles/DistributorProfile';
 import ConsumerProfile from './components/profiles/ConsumerProfile';
-import RegulatorProfile from './components/profiles/RegulatorProfile';
+import RetailerProfile from './components/profiles/RetailerProfile';
 
 function AppContent() {
   const { user } = useApp();
@@ -35,8 +35,8 @@ function AppContent() {
           return <DistributorProfile />;
         case 'consumer':
           return <ConsumerProfile />;
-        case 'regulator':
-          return <RegulatorProfile />;
+        case 'retailer':
+          return <RetailerProfile />;
       }
     }
 
@@ -47,8 +47,8 @@ function AppContent() {
         return <DistributorDashboard key={pageKey} currentPage={currentPage} onNavigate={handleNavigate} />;
       case 'consumer':
         return <ConsumerDashboard key={pageKey} currentPage={currentPage} />;
-      case 'regulator':
-        return <RegulatorDashboard key={pageKey} currentPage={currentPage} />;
+      case 'retailer':
+        return <RetailerDashboard key={pageKey} currentPage={currentPage} />;
       default:
         return null;
     }

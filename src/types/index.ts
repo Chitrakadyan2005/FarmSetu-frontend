@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'farmer' | 'distributor' | 'consumer' | 'regulator';
+  role: 'farmer' | 'distributor' | 'consumer' | 'retailer';
 }
 
 export interface ProduceBatch {
