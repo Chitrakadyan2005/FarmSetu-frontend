@@ -99,6 +99,7 @@ const getQualityFactors = (batch: any, grade: string): string[] => {
   }
   
   if (batch.location.includes('California')) {
+  }
   if (batch.location.includes('Punjab') || batch.location.includes('Haryana')) {
     factors.push('Premium growing region');
   }
