@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import QRCode from 'react-qr-code';
-import { Download, QrCode, User, MapPin, Phone, Store } from 'lucide-react';
+import { Download, QrCode, User, MapPin, Phone, Store, Package } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface RetailerProfileData {
@@ -9,6 +9,8 @@ interface RetailerProfileData {
   storeName: string;
   location: string;
   contact: string;
+  productsHandled: string[];
+  stockUnits: number;
 }
 
 const RetailerProfile: React.FC = () => {
@@ -17,7 +19,9 @@ const RetailerProfile: React.FC = () => {
     name: user?.name || '',
     storeName: 'Fresh Market Store',
     location: 'Oregon, USA',
-    contact: '+1 555-0303'
+    contact: '+1 555-0303',
+    productsHandled: ['Organic Tomatoes', 'Fresh Carrots', 'Bell Peppers', 'Organic Lettuce'],
+    stockUnits: 150
   });
 
   const [qrSeed, setQrSeed] = useState<string>(uuidv4());
@@ -96,6 +100,23 @@ const RetailerProfile: React.FC = () => {
                 <label className="block text-sm text-gray-600 mb-1 flex items-center"><Phone className="w-4 h-4 mr-2"/>Contact</label>
                 <input className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.contact} onChange={(e) => handleUpdate({ contact: e.target.value })}/>
               </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1 flex items-center"><Package className="w-4 h-4 mr-2"/>Stock (units)</label>
+                <input type="number" className="w-full border border-gray-300 rounded-lg px-3 py-2" value={profile.stockUnits} onChange={(e) => handleUpdate({ stockUnits: Number(e.target.value || 0) })}/>
+              </div>
+            </div>
+          </div>
+
+          {/* Products Handled */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Products in Store</h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.productsHandled.map((product, idx) => (
+                <span key={idx} className="inline-flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                  <Store className="w-4 h-4 mr-1"/>
+                  {product}
+                </span>
+              ))}
             </div>
           </div>
         </div>
