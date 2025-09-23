@@ -247,12 +247,14 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Retailer Dashboard</h2>
-        <p className="text-gray-600">Manage your store inventory and product quality</p>
-      </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          Welcome back, Store Retailer! 🏪
+        </h2>
+        <p className="text-gray-600 mb-8">Here's an overview of your store activity.</p>
+          className="text-purple-600 hover:text-purple-700 mb-4"
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -260,8 +262,8 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
           <div className="flex items-center">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Package className="w-6 h-6 text-orange-600" />
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Package className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Available Products</p>
@@ -277,27 +279,8 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">High Quality (Grade A)</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {availableBatches.filter(b => getQualityScore(b) === 'A').length}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
-        >
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Store className="w-6 h-6 text-blue-600" />
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Store className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">In Store</p>
@@ -311,54 +294,95 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg">
-              <Brain className="w-6 h-6 text-purple-600" />
+              <TrendingUp className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">ML Verified</p>
-              <p className="text-2xl font-bold text-gray-900">{availableBatches.length}</p>
+              <p className="text-sm font-medium text-gray-600">Total Value</p>
+              <p className="text-2xl font-bold text-gray-900">
+                ${availableBatches.reduce((sum, batch) => sum + (batch.price * batch.quantity), 0).toFixed(2)}
+              </p>
             </div>
           </div>
         </motion.div>
-      </div>
 
-      {/* Quick Actions */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+      <motion.div 
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Search className="w-5 h-5 mr-2 text-purple-600" />
+          Product Search
+        </h3>
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="bg-white rounded-lg shadow p-6 mb-8"
+      >
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            onClick={() => setViewMode('inventory')}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 transition-colors"
+          >
+            <Search className="w-5 h-5 text-purple-600 mr-3" />
+            <span className="font-medium">Search Products</span>
+          </motion.button>
+          
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 transition-colors"
+          >
+            <Package className="w-5 h-5 text-purple-600 mr-3" />
+            <span className="font-medium">Manage Inventory</span>
+          </motion.button>
+          
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 transition-colors"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            <TrendingUp className="w-5 h-5 text-purple-600 mr-3" />
+            <span className="font-medium">View Analytics</span>
+          </motion.button>
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center"
+      </motion.div>
+
+      {/* QR Scanner */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.5 }}
         className="bg-white rounded-lg shadow p-6 mb-8"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            onClick={() => setViewMode('inventory')}
-            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <QrCode className="w-5 h-5 mr-2 text-purple-600" />
+          Product Scanner
+        </h3>
+        <p className="text-gray-600 mb-4">Scan QR codes on food packages to trace their complete journey.</p>
+        <div className="flex space-x-2 items-center">
+          <button
+            onClick={() => {
+              alert('Camera would open here in a real app. For demo, please use the input field.');
+            }}
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center"
           >
-            <Search className="w-5 h-5 text-orange-600 mr-3" />
-            <span className="font-medium">Search Products</span>
-          </motion.button>
-          
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            <QrCode className="w-4 h-4 mr-2" />
+            Scan
+          </button>
+          <span className="text-gray-500">OR</span>
+          <input
+            type="text"
+            placeholder="Paste QR data"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          />
+          <button
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors"
           >
-            <Package className="w-5 h-5 text-blue-600 mr-3" />
-            <span className="font-medium">Manage Inventory</span>
-          </motion.button>
-          
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <TrendingUp className="w-5 h-5 text-green-600 mr-3" />
-            <span className="font-medium">View Analytics</span>
-          </motion.button>
+            <Search className="w-4 h-4" />
+          </button>
         </div>
       </motion.div>
 
@@ -371,9 +395,9 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
       >
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-            <Brain className="w-5 h-5 mr-2 text-orange-600" />
-            ML-Enhanced Product Overview
-          </h3>
+            <Package className="w-5 h-5 mr-2 text-purple-600" />
+            Product Overview
+          <h3 className="text-lg font-semibold text-gray-900">Available Inventory</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -384,18 +408,11 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Product
-                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Supplier
-                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   ML Quality Grade
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fraud Risk
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  Status
                 </th>
               </tr>
             </thead>
@@ -405,30 +422,8 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
                 return (
                   <tr key={batch.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {batch.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {batch.cropType}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {batch.currentOwner}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        insights.quality.grade === 'A' ? 'bg-green-100 text-green-800' :
-                        insights.quality.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        Grade {insights.quality.grade}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        insights.fraud.riskLevel === 'low' ? 'bg-green-100 text-green-800' :
-                        insights.fraud.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {insights.fraud.riskLevel.toUpperCase()}
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
+                        {batch.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -437,7 +432,7 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
                           setSelectedBatch(batch);
                           setViewMode('inventory');
                         }}
-                        className="text-orange-600 hover:text-orange-700 font-medium flex items-center"
+                        className="text-purple-600 hover:text-purple-700 font-medium flex items-center"
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         View Actions
