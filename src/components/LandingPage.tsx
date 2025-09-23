@@ -17,8 +17,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
       <header
-  className="relative bg-cover bg-center h-screen"
-  style={{ backgroundImage: "url('https://images.pexels.com/photos/1595104/pexels-photo-1595104.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop')" }}
+  className="relative bg-cover bg-center h-[85vh]"
+  style={{ backgroundImage: "url('../landingpage/wallpaper.jpg')" }}
 >
   {/* Overlay for better readability */}
   <div className="absolute inset-0 bg-black/30"></div>
@@ -35,7 +35,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.3))',
         }}
         loading="eager"
-        fetchpriority="high"
       />
 
       <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ 
