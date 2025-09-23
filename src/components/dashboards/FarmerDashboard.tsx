@@ -104,9 +104,9 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
         transition={{ duration: 0.6 }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">My Batches</h2>
-          <p className="text-gray-600">Manage your crop batches and track their journey</p>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">My Batches</h2>
+          <p className="text-sm sm:text-base text-gray-600">Manage your crop batches and track their journey</p>
         </div>
 
         <div className="flex items-center justify-between mb-6">
@@ -248,11 +248,12 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
       transition={{ duration: 0.6 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
-      {/* Welcome Line instead of "Farmer Dashboard" */}
-      <h2 className="text-3xl font-bold text-gray-900 mb-2">
-        Welcome back, {user?.name}! 🌱
-      </h2>
-      <p className="text-gray-600 mb-8">Here's an overview of your farm activity.</p>
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">
+          Welcome back, {user?.name}! 🌱
+        </h2>
+        <p className="text-sm sm:text-base text-gray-600">Here's an overview of your farm activity.</p>
+      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

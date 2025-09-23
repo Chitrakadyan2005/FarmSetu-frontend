@@ -153,9 +153,9 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
         transition={{ duration: 0.6 }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Procured Batches</h2>
-          <p className="text-gray-600">Manage your inventory and transfers</p>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Procured Batches</h2>
+          <p className="text-sm sm:text-base text-gray-600">Manage your inventory and transfers</p>
         </div>
 
         {/* Search */}
@@ -310,11 +310,11 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
       transition={{ duration: 0.6 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">
           Welcome back, Priya Distributors! 🚚
         </h2>
-        <p className="text-gray-600 mb-8">Here's an overview of your distribution activity.</p>
+        <p className="text-sm sm:text-base text-gray-600">Here's an overview of your distribution activity.</p>
       </div>
 
       {/* Stats Cards */}

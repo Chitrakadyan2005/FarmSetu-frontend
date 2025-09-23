@@ -209,9 +209,9 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
         transition={{ duration: 0.6 }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h2>
-          <p className="text-gray-600">View your purchase history and product journeys</p>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">My Purchases</h2>
+          <p className="text-sm sm:text-base text-gray-600">View your purchase history and product journeys</p>
         </div>
 
         {/* Search */}
@@ -374,11 +374,11 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
       transition={{ duration: 0.6 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">
           Welcome back, Anita Verma! 🛒
         </h2>
-        <p className="text-gray-600 mb-8">Here's an overview of your food journey discoveries.</p>
+        <p className="text-sm sm:text-base text-gray-600">Here's an overview of your food journey discoveries.</p>
       </div>
 
       {/* Stats Cards */}
