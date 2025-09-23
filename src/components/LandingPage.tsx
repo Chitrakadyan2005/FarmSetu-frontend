@@ -459,4 +459,51 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   <ul className="space-y-2 text-gray-600" style={{ fontFamily: "'Inter', sans-serif" }}>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      Know
+                      Know your food's origin
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                      Verify quality and safety
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                      Make informed choices
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <img 
+                src="https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop" 
+                alt="Fresh vegetables and fruits" 
+                className="rounded-lg shadow-xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-blue-500/20 rounded-lg"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Ready to Transform Your Food Journey?
+          </h3>
+          <p className="text-gray-300 mb-8 max-w-2xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+            Join thousands of farmers, distributors, retailers, and consumers who trust FarmSetu for complete food traceability.
+          </p>
+          <button
+            onClick={() => onNavigate("login")}
+            className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Get Started Today
+          </button>
+        </div>
+      </footer>
+    </div>
+  );
+};
