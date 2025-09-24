@@ -179,7 +179,7 @@ const JourneyModal: React.FC<JourneyModalProps> = ({
                     <span className="ml-2 text-blue-600 font-semibold">{insights.supplyChain.quantityToSend} kg</span>
                   </div>
 <img 
-  src="../../../public/MLImages/Storage.jpg" 
+  src="../MLImages/Storage.jpg" 
   alt="Pricing Graph" 
   className="w-full max-w-2xl mx-auto"
 />               
@@ -242,7 +242,7 @@ const JourneyModal: React.FC<JourneyModalProps> = ({
                     </span>
                   </div>
 <img 
-  src="../../../public/MLImages/Pricing.jpg" 
+  src="../MLImages/Pricing.jpg" 
   alt="Pricing Graph" 
   className="w-full max-w-2xl mx-auto"
 />
