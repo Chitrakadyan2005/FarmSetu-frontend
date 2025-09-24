@@ -130,9 +130,20 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>How It Works</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Our blockchain-powered platform creates an immutable record of your food's journey
-            </p>
+            {/* Explanatory Video Section */}  
+<div className="flex justify-center">
+  <div className="w-full md:w-3/4 lg:w-2/3 aspect-video rounded-2xl shadow-lg overflow-hidden">
+    <video
+      src="/landingpage/flow.mp4"
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="w-full h-full object-cover"
+    />
+  </div>
+</div>
+
           </div>
           
           <div className="grid md:grid-cols-4 gap-8">
