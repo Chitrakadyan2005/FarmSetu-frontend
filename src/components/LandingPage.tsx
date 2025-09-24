@@ -16,86 +16,112 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
-      <header
-  className="relative bg-cover bg-center h-[85vh]"
-  style={{ backgroundImage: "url('../landingpage/wallpaper.jpg')" }}
->
-  {/* Overlay for better readability */}
-  <div className="absolute inset-0 bg-black/30"></div>
-
-  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
-    <div className="text-center text-white w-full">
-      
-      {/* Logo */}
-      <img 
-        src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/e729fb74-4401-4bed-8c19-fc292200680a.png" 
-        alt="FarmSetu Logo" 
-        className="mx-auto mb-8 w-32 sm:w-48 md:w-56 drop-shadow-2xl"
-        style={{ 
-          filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.3))',
-        }}
-        loading="eager"
-      />
-
-      <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ 
-        fontFamily: "'Poppins', sans-serif", 
-        textShadow: '0 4px 8px rgba(0,0,0,0.3)',
-        letterSpacing: '-0.02em',
-        fontWeight: '800'
-      }}>
-        <span className="text-green-400" style={{ 
-          textShadow: '0 4px 8px rgba(0,0,0,0.4)'
-        }}>FarmSetu</span>
-        <br />
-        <span className="text-3xl sm:text-4xl text-white" style={{ 
-          fontFamily: "'Playfair Display', serif", 
-          fontWeight: '700', 
-          letterSpacing: '0.08em',
-          textShadow: '0 4px 8px rgba(0,0,0,0.5)'
-        }}>Linking Farm to Fork</span>
-      </h1>
-      
-      <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50" style={{ 
-        fontFamily: "'Inter', sans-serif", 
-        fontWeight: '400', 
-        lineHeight: '1.8',
-        letterSpacing: '0.01em',
-        textShadow: '0 2px 4px rgba(0,0,0,0.6)'
-      }}>
-        Track your food from farm to fork with blockchain technology.
-        Ensuring transparency, authenticity, and trust in every bite.
-      </p>
-
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button
-          onClick={() => onNavigate("login")}
-          className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-500"
-          style={{ 
-            fontFamily: "'Poppins', sans-serif",
-            backdropFilter: 'blur(10px)',
-            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(22, 163, 74, 0.9) 100%)',
-            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-          }}
+      <header className="relative h-screen overflow-hidden">
+        {/* Video Background */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          preload="auto"
         >
-          Get Started
-          <ChevronRight className="ml-2 w-5 h-5" />
-        </button>
-        <button 
-          onClick={scrollToHowItWorks}
-          className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+          <source src="/landingpage/background-video.mp4" type="video/mp4" />
+          {/* Fallback image if video fails to load */}
+        </video>
+        
+        {/* Fallback image if video fails to load */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center z-0"
           style={{ 
-            fontFamily: "'Poppins', sans-serif",
-            backdropFilter: 'blur(5px)',
-            background: 'rgba(255, 255, 255, 0)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+            backgroundImage: 'url(/landingpage/wallpaper.jpg)',
+            display: 'none' 
           }}
-        >
-          Learn More
-        </button>
-      </div>
-    </div>
-  </div>
-</header>
+          onError={() => {
+            const video = document.querySelector('video');
+            const fallback = document.querySelector('[style*="background-image"]') as HTMLElement;
+            if (video && fallback) {
+              video.style.display = 'none';
+              fallback.style.display = 'block';
+            }
+          }}
+        ></div>
+        
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center z-20">
+          <div className="text-center text-white w-full">
+            
+            {/* Logo */}
+            <img 
+              src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/e729fb74-4401-4bed-8c19-fc292200680a.png" 
+              alt="FarmSetu Logo" 
+              className="mx-auto mb-8 w-32 sm:w-48 md:w-56 drop-shadow-2xl"
+              style={{ 
+                filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.3))',
+              }}
+              loading="eager"
+            />
+
+            <h1 className="text-4xl sm:text-6xl font-bold mb-6" style={{ 
+              fontFamily: "'Poppins', sans-serif", 
+              textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+              letterSpacing: '-0.02em',
+              fontWeight: '800'
+            }}>
+              {/* <span className="text-green-400" style={{ 
+                textShadow: '0 4px 8px rgba(0,0,0,0.4)'
+              }}>FarmSetu</span> */}
+              <br />
+              <span className="text-3xl sm:text-4xl text-green-400" style={{ 
+                fontFamily: "'Playfair Display', serif", 
+                fontWeight: '700', 
+                letterSpacing: '0.08em',
+                textShadow: '0 4px 8px rgba(0,0,0,0.5)'
+              }}>Linking Farm to Fork</span>
+            </h1>
+            
+            <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-50" style={{ 
+              fontFamily: "'Inter', sans-serif", 
+              fontWeight: '400', 
+              lineHeight: '1.8',
+              letterSpacing: '0.01em',
+              textShadow: '0 2px 4px rgba(0,0,0,0.6)'
+            }}>
+              Ensuring transparency, authenticity, and trust in every bite.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => onNavigate("login")}
+                className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-500"
+                style={{ 
+                  fontFamily: "'Poppins', sans-serif",
+                  backdropFilter: 'blur(10px)',
+                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(22, 163, 74, 0.9) 100%)',
+                  boxShadow: '0 8px 32px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                }}
+              >
+                Get Started
+                <ChevronRight className="ml-2 w-5 h-5" />
+              </button>
+              <button 
+                onClick={scrollToHowItWorks}
+                className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:bg-opacity-20 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                style={{ 
+                  fontFamily: "'Poppins', sans-serif",
+                  backdropFilter: 'blur(10px)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                }}
+              >
+                Learn More
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
 
 
 

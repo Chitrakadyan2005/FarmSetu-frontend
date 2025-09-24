@@ -12,7 +12,8 @@ import {
   Search,
   CheckCircle,
   Clock,
-  ShoppingCart
+  ShoppingCart,
+  Brain
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
@@ -69,10 +70,10 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
       if (data.type === 'farmer-batch' || data.type === 'distributor-batch') {
         setShowBuyForm({
           ...data,
-          buyerName: 'Mike Distributor',
+          buyerName: 'Priya Distributors',
           buyerProfession: 'Distributor',
           date: new Date().toISOString().split('T')[0],
-          location: 'Nevada, USA'
+          location: 'Maharashtra, India'
         });
       }
     } catch (e) {
@@ -152,9 +153,9 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
         transition={{ duration: 0.6 }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Procured Batches</h2>
-          <p className="text-gray-600">Manage your inventory and transfers</p>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Procured Batches</h2>
+          <p className="text-sm sm:text-base text-gray-600">Manage your inventory and transfers</p>
         </div>
 
         {/* Search */}
@@ -206,7 +207,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                           {batch.status}
@@ -252,7 +253,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                     <div>
                       <p className="font-medium text-gray-900">Batch: {request.batchId}</p>
                       <p className="text-sm text-gray-600">Buyer: {request.buyerName} ({request.buyerProfession})</p>
-                      <p className="text-sm text-gray-600">Quantity: {request.quantity}kg | Price: ${request.price}</p>
+                      <p className="text-sm text-gray-600">Quantity: {request.quantity}kg | Price: ₹{request.price}</p>
                       <p className="text-sm text-gray-500">Date: {request.date}</p>
                       
                       {/* ML Verification Badge */}
@@ -309,11 +310,11 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
       transition={{ duration: 0.6 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, Mike Distributor! 🚚
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">
+          Welcome back, Priya Distributors! 🚚
         </h2>
-        <p className="text-gray-600 mb-8">Here's an overview of your distribution activity.</p>
+        <p className="text-sm sm:text-base text-gray-600">Here's an overview of your distribution activity.</p>
       </div>
 
       {/* Stats Cards */}
@@ -456,10 +457,10 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                 <button
                   onClick={() => setShowBuyForm({
                     ...scanResult,
-                    buyerName: 'Mike Distributor',
+                    buyerName: 'Priya Distributors',
                     buyerProfession: 'Distributor',
                     date: new Date().toISOString().split('T')[0],
-                    location: 'Nevada, USA'
+                    location: 'Maharashtra, India'
                   })}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center"
                 >

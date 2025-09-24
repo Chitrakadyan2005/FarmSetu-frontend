@@ -17,11 +17,11 @@ const FarmerProfile: React.FC = () => {
   const { user } = useApp();
   const [profile, setProfile] = useState<FarmerProfileData>({
     name: user?.name || "",
-    location: "California, USA",
-    contact: "+1 555-0101",
+    location: "Punjab, India",
+    contact: "+91 98765-43210",
     crops: ["Tomatoes", "Carrots"],
     stockKg: 120,
-    connectedDistributors: ["Green Valley Distributors"],
+    connectedDistributors: ["Mumbai Fresh Distributors"],
   });
 
   const [qrSeed, setQrSeed] = useState<string>(uuidv4());

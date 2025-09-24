@@ -17,9 +17,9 @@ const RetailerProfile: React.FC = () => {
   const { user } = useApp();
   const [profile, setProfile] = useState<RetailerProfileData>({
     name: user?.name || '',
-    storeName: 'Fresh Market Store',
-    location: 'Oregon, USA',
-    contact: '+1 555-0303',
+    storeName: 'Kirana Fresh Store',
+    location: 'Mumbai, India',
+    contact: '+91 98765-43213',
     productsHandled: ['Organic Tomatoes', 'Fresh Carrots', 'Bell Peppers', 'Organic Lettuce'],
     stockUnits: 150
   });

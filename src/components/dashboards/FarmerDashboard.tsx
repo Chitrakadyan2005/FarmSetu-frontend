@@ -104,9 +104,9 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
         transition={{ duration: 0.6 }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">My Batches</h2>
-          <p className="text-gray-600">Manage your crop batches and track their journey</p>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">My Batches</h2>
+          <p className="text-sm sm:text-base text-gray-600">Manage your crop batches and track their journey</p>
         </div>
 
         <div className="flex items-center justify-between mb-6">
@@ -166,7 +166,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                     <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">${batch.price}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                         {batch.status}
@@ -248,11 +248,12 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
       transition={{ duration: 0.6 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
-      {/* Welcome Line instead of "Farmer Dashboard" */}
-      <h2 className="text-3xl font-bold text-gray-900 mb-2">
-        Welcome back, {user?.name}! 🌱
-      </h2>
-      <p className="text-gray-600 mb-8">Here's an overview of your farm activity.</p>
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">
+          Welcome back, {user?.name}! 🌱
+        </h2>
+        <p className="text-sm sm:text-base text-gray-600">Here's an overview of your farm activity.</p>
+      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -305,7 +306,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Value</p>
               <p className="text-2xl font-bold text-gray-900">
-                ${userBatches.reduce((sum, batch) => sum + (batch.price * batch.quantity), 0).toFixed(2)}
+                ₹{userBatches.reduce((sum, batch) => sum + (batch.price * batch.quantity), 0).toFixed(2)}
               </p>
             </div>
           </div>

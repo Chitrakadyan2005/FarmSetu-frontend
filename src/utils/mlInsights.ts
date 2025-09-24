@@ -99,6 +99,8 @@ const getQualityFactors = (batch: any, grade: string): string[] => {
   }
   
   if (batch.location.includes('California')) {
+  }
+  if (batch.location.includes('Punjab') || batch.location.includes('Haryana')) {
     factors.push('Premium growing region');
   }
   
@@ -114,7 +116,7 @@ const getFraudRisk = (batch: any): { level: 'low' | 'medium' | 'high'; confidenc
   let riskScore = 0;
   
   // Check for unusual pricing
-  const expectedPrice = batch.cropType.toLowerCase().includes('organic') ? 4.5 : 3.0;
+  const expectedPrice = batch.cropType.toLowerCase().includes('organic') ? 35 : 25;
   if (batch.price > expectedPrice * 2) {
     flags.push('Unusually high pricing');
     riskScore += 30;
