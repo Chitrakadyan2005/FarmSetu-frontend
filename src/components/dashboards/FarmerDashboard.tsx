@@ -14,6 +14,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
 import JourneyModal from '../common/JourneyModal';
+import { getDummyRiceInsights } from '../../utils/mlInsights';
 
 interface FarmerDashboardProps {
   currentPage: string;
@@ -26,7 +27,27 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
   const [scanResult, setScanResult] = useState<any>(null);
   const [selectedBatch, setSelectedBatch] = useState<any>(null);
 
-  const userBatches = batches.filter(batch => batch.farmerId === user?.id);
+  // Add dummy Rice batch from Cuttack
+  const dummyRiceBatch = {
+    id: 'BATCH-001',
+    cropType: 'Rice',
+    harvestDate: '2025-01-20',
+    quantity: 300,
+    price: 1574.26,
+    farmerId: user?.id,
+    farmerName: user?.name || 'Farmer1',
+    status: 'harvested' as const,
+    currentOwner: user?.name || 'Farmer1',
+    location: 'Cuttack',
+    transfers: [{
+      to: 'Cuttack Market',
+      location: 'Cuttack Market',
+      timestamp: '2024-01-21',
+      details: 'Transferred to Cuttack Market for distribution'
+    }]
+  };
+
+  const userBatches = [dummyRiceBatch, ...batches.filter(batch => batch.farmerId === user?.id)];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -65,28 +86,31 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
   };
 
   const getBatchJourney = (batch: any) => {
-    const journey = [
-      {
-        stage: 'Farm Origin',
-        handler: user?.name || 'Unknown Farmer',
-        location: batch.location,
-        timestamp: batch.harvestDate,
-        details: `Harvested ${batch.quantity}kg of ${batch.cropType}`
-      }
-    ];
+  return [
+    {
+      stage: 'District Origin',
+      handler: user?.name || 'Unknown Farmer',
+      location: batch.id === 'BATCH-001' ? 'Cuttack' : batch.location,
+      timestamp: batch.harvestDate,
+      details: `Harvested ${batch.quantity}kg of ${batch.cropType}` + (batch.id === 'BATCH-001' ? ' from Cuttack District' : '')
+    },
+    ...batch.transfers?.map((transfer: any, index: number) => ({
+      stage: 'Market Transfer',
+      handler: transfer.to,
+      location: batch.id === 'BATCH-001' ? 'Cuttack Market' : transfer.location,
+      timestamp: transfer.timestamp,
+      details: `Transferred to ${transfer.to}`
+    })) || [],
+    {
+      stage: 'Retail Store',
+      handler: batch.id === 'BATCH-001' ? 'Suresh Store' : 'Kirana Fresh Store',
+      location: batch.id === 'BATCH-001' ? 'Cuttack' : 'Mumbai, India',
+      timestamp: batch.receivedDate || batch.harvestDate,
+      details: 'Received and stocked for sale'
+    }
+  ];
+};
 
-    batch.transfers?.forEach((transfer: any, index: number) => {
-      journey.push({
-        stage: `Transfer ${index + 1}`,
-        handler: transfer.to,
-        location: transfer.location,
-        timestamp: transfer.timestamp,
-        details: `Transferred to ${transfer.to}`
-      });
-    });
-
-    return journey;
-  };
   const handleScan = () => {
     try {
       const data = JSON.parse(scanInput);
@@ -166,7 +190,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
                     <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{new Date(batch.harvestDate).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}{batch.id === 'BATCH-001' ? '/quintal' : ''}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                         {batch.status}
@@ -231,7 +255,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ currentPage }) => {
           <JourneyModal
             isOpen={!!selectedBatch}
             onClose={() => setSelectedBatch(null)}
-            batch={selectedBatch}
+            batch={selectedBatch.id === 'BATCH-001' ? {...selectedBatch, ...getDummyRiceInsights()} : selectedBatch}
             journey={getBatchJourney(selectedBatch)}
             qrValue={getBatchQRValue(selectedBatch)}
             title={`Batch Actions - ${selectedBatch.id}`}

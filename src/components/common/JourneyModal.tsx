@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, MapPin, Brain, QrCode, Shield } from 'lucide-react';
+import { X, MapPin, Brain, QrCode, Shield, Truck, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import MLInsightsPanel from '../insights/MLInsightsPanel';
-import { generateMLInsights } from '../../utils/mlInsights';
+import { generateMLInsights, getDummyRiceInsights } from '../../utils/mlInsights';
 
 interface JourneyStep {
   stage: string;
@@ -148,10 +148,45 @@ const JourneyModal: React.FC<JourneyModalProps> = ({
                 ML Quality & Authenticity Analysis
               </h4>
               
-              {/* Enhanced ML Insights */}
+              {/* Enhanced ML Insights with Supply Chain */}
               <div className="space-y-6">
+                {/* Supply Chain Recommendation */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <Truck className="w-5 h-5 text-blue-600 mr-2" />
+                    <span className="font-medium text-blue-800">Supply Chain Recommendation</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                    <div>
+                      <span className="font-medium text-blue-700">🚛 Recommended Route:</span>
+                      <span className="ml-2 text-blue-600 font-semibold">{insights.supplyChain.recommendedRoute}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-blue-700">⏰ Optimal Storage Time:</span>
+                      <span className="ml-2 text-blue-600">{insights.supplyChain.optimalStorageTime} hrs</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-blue-700">🚚 Predicted Delivery Time:</span>
+                      <span className="ml-2 text-blue-600">{insights.supplyChain.predictedDeliveryTime} hrs</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-blue-700">🍃 Expected Spoilage:</span>
+                      <span className="ml-2 text-blue-600">{insights.supplyChain.expectedSpoilage}%</span>
+                    </div>
+                  </div>
+                  <div className="text-sm text-blue-700 mb-3">
+                    <span className="font-medium">🎯 Quantity to Send:</span>
+                    <span className="ml-2 text-blue-600 font-semibold">{insights.supplyChain.quantityToSend} kg</span>
+                  </div>
+<img 
+  src="../../../public/MLImages/Storage.jpg" 
+  alt="Pricing Graph" 
+  className="w-full max-w-2xl mx-auto"
+/>               
+                </div>
+
                 {/* Quality & Grade */}
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                {/* <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center mb-3">
                     <Shield className="w-5 h-5 text-green-600 mr-2" />
                     <span className="font-medium text-green-800">Quality Assessment</span>
@@ -175,37 +210,42 @@ const JourneyModal: React.FC<JourneyModalProps> = ({
                   <div className="mt-2 text-sm text-green-700">
                     <span className="font-medium">Key Factors:</span> {insights.quality.factors.join(', ')}
                   </div>
-                </div>
+                </div> */}
 
                 {/* Pricing Insights */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <div className="flex items-center mb-3">
-                    <Brain className="w-5 h-5 text-blue-600 mr-2" />
-                    <span className="font-medium text-blue-800">Pricing Analysis</span>
+                    <TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
+                    <span className="font-medium text-purple-800">Pricing Analysis</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-blue-700">Current Price:</span>
-                      <span className="ml-2 text-blue-600">₹{batch.price}/kg</span>
+                      <span className="font-medium text-purple-700">Actual Price:</span>
+                      <span className="ml-2 text-purple-600">₹{batch.price}/kg</span>
                     </div>
                     <div>
-                      <span className="font-medium text-blue-700">Suggested Price:</span>
-                      <span className="ml-2 text-blue-600 font-semibold">₹{insights.pricing.suggestedPrice}/kg</span>
+                      <span className="font-medium text-purple-700">Predicted Price:</span>
+                      <span className="ml-2 text-purple-600 font-semibold">₹{insights.pricing.suggestedPrice}/kg</span>
                     </div>
                   </div>
-                  <div className="mt-2 text-sm text-blue-700">
+                  <div className="mt-2 text-sm text-purple-700">
                     <span className="font-medium">Price Range:</span> ₹{insights.pricing.priceRange.min} - ₹{insights.pricing.priceRange.max}/kg
                   </div>
-                  <div className="mt-1 text-sm text-blue-700">
+                  <div className="mt-1 text-sm text-purple-700 mb-3">
                     <span className="font-medium">Market Trend:</span> 
                     <span className={`ml-2 capitalize ${
                       insights.pricing.marketTrend === 'rising' ? 'text-green-600' :
                       insights.pricing.marketTrend === 'declining' ? 'text-red-600' :
-                      'text-blue-600'
+                      'text-purple-600'
                     }`}>
                       {insights.pricing.marketTrend}
                     </span>
                   </div>
+<img 
+  src="../../../public/MLImages/Pricing.jpg" 
+  alt="Pricing Graph" 
+  className="w-full max-w-2xl mx-auto"
+/>
                 </div>
 
                 {/* Fraud Detection */}
@@ -215,7 +255,7 @@ const JourneyModal: React.FC<JourneyModalProps> = ({
                   'bg-red-50 border-red-200'
                 }`}>
                   <div className="flex items-center mb-3">
-                    <Shield className={`w-5 h-5 mr-2 ${
+                    <AlertTriangle className={`w-5 h-5 mr-2 ${
                       insights.fraud.riskLevel === 'low' ? 'text-green-600' :
                       insights.fraud.riskLevel === 'medium' ? 'text-yellow-600' :
                       'text-red-600'

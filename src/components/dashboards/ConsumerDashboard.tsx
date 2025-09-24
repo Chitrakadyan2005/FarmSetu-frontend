@@ -4,6 +4,7 @@ import { QrCode, Search, Shield, MapPin, Calendar, DollarSign, ArrowRight, Scan,
 import { useApp } from '../../context/AppContext';
 import { ProduceBatch } from '../../types';
 import JourneyModal from '../common/JourneyModal';
+import { getDummyRiceInsights } from '../../utils/mlInsights';
 
 interface ConsumerDashboardProps {
   currentPage: string;
@@ -22,8 +23,45 @@ interface Purchase {
   rating?: number;
 }
 
+// Dummy Rice purchase from Cuttack
+const dummyRicePurchase: Purchase = {
+  id: 'P004',
+  batchId: 'BATCH-001',
+  product: 'Rice',
+  quantity: 5,
+  price: 157.43,
+  date: '2025-01-24',
+  location: 'Cuttack Market',
+  journey: [
+    {
+      stage: 'District Origin',
+      handler: 'Farmer1',
+      location: 'Cuttack',
+      timestamp: '2024-01-20',
+      details: 'Harvested 300kg of Rice from Cuttack District'
+    },
+    {
+      stage: 'Market Transfer',
+      handler: 'Cuttack Market',
+      location: 'Cuttack Market',
+      timestamp: '2024-01-21',
+      details: 'Transferred to Cuttack Market for distribution'
+    },
+    {
+      stage: 'Consumer Purchase',
+      handler: 'Anita Verma',
+      location: 'Cuttack Market',
+      timestamp: '2025-01-24',
+      details: 'Purchased by consumer'
+    }
+  ],
+  feedback: 'High quality rice from Cuttack. Good grain texture and aroma.',
+  rating: 4
+};
+
 // Dummy purchase data
 const dummyPurchases: Purchase[] = [
+  dummyRicePurchase,
   {
     id: 'P001',
     batchId: 'BTH001',
@@ -33,28 +71,29 @@ const dummyPurchases: Purchase[] = [
     date: '2024-01-18',
     location: 'Mumbai, India',
     journey: [
-      {
-        stage: 'Farm Origin',
-        handler: 'Rajesh Sharma',
-        location: 'Punjab, India',
-        timestamp: '2024-01-15',
-        details: 'Harvested 100kg of Organic Tomatoes'
-      },
-      {
-        stage: 'Distribution Center',
-        handler: 'Mumbai Fresh Distributors',
-        location: 'Maharashtra, India',
-        timestamp: '2024-01-16',
-        details: 'Quality checked and packaged for retail'
-      },
-      {
-        stage: 'Retail Store',
-        handler: 'Kirana Fresh Store',
-        location: 'Mumbai, India',
-        timestamp: '2024-01-17',
-        details: 'Available for consumer purchase'
-      }
-    ],
+  {
+    stage: 'District Origin',
+    handler: 'Rajesh Sharma',
+    location: 'Punjab, India',
+    timestamp: '2024-01-15',
+    details: 'Harvested 100kg of Organic Tomatoes'
+  },
+  {
+    stage: 'Market Transfer',
+    handler: 'Mumbai Fresh Distributors',
+    location: 'Maharashtra, India',
+    timestamp: '2024-01-16',
+    details: 'Quality checked and packaged for retail'
+  },
+  {
+    stage: 'Consumer Purchase',
+    handler: 'Kirana Fresh Store',
+    location: 'Mumbai, India',
+    timestamp: '2024-01-17',
+    details: 'Available for consumer purchase'
+  }
+],
+
     feedback: 'Excellent quality tomatoes! Very fresh and flavorful.',
     rating: 5
   },
@@ -67,21 +106,29 @@ const dummyPurchases: Purchase[] = [
     date: '2024-01-22',
     location: 'Mumbai, India',
     journey: [
-      {
-        stage: 'Farm Origin',
-        handler: 'Rajesh Sharma',
-        location: 'Punjab, India',
-        timestamp: '2024-01-20',
-        details: 'Harvested 50kg of Fresh Carrots'
-      },
-      {
-        stage: 'Local Market',
-        handler: 'Local Mandi',
-        location: 'Mumbai, India',
-        timestamp: '2024-01-21',
-        details: 'Direct from farm to market'
-      }
-    ],
+  {
+    stage: 'District Origin',
+    handler: 'Rajesh Sharma',
+    location: 'Punjab, India',
+    timestamp: '2024-01-20',
+    details: 'Harvested 50kg of Fresh Carrots'
+  },
+  {
+    stage: 'Market Transfer',
+    handler: 'Local Mandi',
+    location: 'Mumbai, India',
+    timestamp: '2024-01-21',
+    details: 'Direct from farm to market'
+  },
+  {
+    stage: 'Consumer Purchase',
+    handler: 'Mumbai Local Market',
+    location: 'Mumbai, India',
+    timestamp: '2024-01-22',
+    details: 'Purchased by consumer'
+  }
+],
+
     feedback: 'Good quality carrots, though could be a bit fresher.',
     rating: 4
   },
@@ -94,21 +141,29 @@ const dummyPurchases: Purchase[] = [
     date: '2024-01-25',
     location: 'Mumbai, India',
     journey: [
-      {
-        stage: 'Farm Origin',
-        handler: 'Haryana Green Farm',
-        location: 'Haryana, India',
-        timestamp: '2024-01-23',
-        details: 'Harvested organic lettuce heads'
-      },
-      {
-        stage: 'Distribution',
-        handler: 'Delhi Organic Distributors',
-        location: 'Delhi, India',
-        timestamp: '2024-01-24',
-        details: 'Temperature controlled transport'
-      }
-    ],
+  {
+    stage: 'District Origin',
+    handler: 'Haryana Green Farm',
+    location: 'Haryana, India',
+    timestamp: '2024-01-23',
+    details: 'Harvested organic lettuce heads'
+  },
+  {
+    stage: 'Market Transfer',
+    handler: 'Delhi Organic Distributors',
+    location: 'Delhi, India',
+    timestamp: '2024-01-24',
+    details: 'Temperature controlled transport'
+  },
+  {
+    stage: 'Consumer Purchase',
+    handler: 'Kirana Fresh Store',
+    location: 'Mumbai, India',
+    timestamp: '2024-01-25',
+    details: 'Purchased by consumer'
+  }
+],
+
     rating: 3
   }
 ];
@@ -356,7 +411,8 @@ const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ currentPage }) =>
               price: selectedPurchase.price / selectedPurchase.quantity,
               quantity: selectedPurchase.quantity,
               harvestDate: selectedPurchase.date,
-              location: selectedPurchase.location
+              location: selectedPurchase.location,
+              ...(selectedPurchase.id === 'P004' ? getDummyRiceInsights() : {})
             }}
             journey={selectedPurchase.journey}
             qrValue={getPurchaseQRValue(selectedPurchase)}

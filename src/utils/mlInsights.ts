@@ -1,4 +1,12 @@
 // ML Insights utility functions
+export interface SupplyChainRecommendation {
+  recommendedRoute: string;
+  optimalStorageTime: number;
+  predictedDeliveryTime: number;
+  expectedSpoilage: number;
+  quantityToSend: number;
+}
+
 export interface QualityPrediction {
   grade: 'A' | 'B' | 'C';
   confidence: number;
@@ -22,7 +30,40 @@ export interface MLInsights {
   quality: QualityPrediction;
   pricing: PricePrediction;
   fraud: FraudDetection;
+  supplyChain: SupplyChainRecommendation;
 }
+
+// Dummy Rice data from Cuttack
+export const getDummyRiceInsights = (): MLInsights => {
+  return {
+    quality: {
+      grade: 'A',
+      confidence: 0.87,
+      factors: ['Premium growing region', 'Optimal harvest timing', 'Quality storage conditions']
+    },
+    pricing: {
+      suggestedPrice: 1612.22,
+      priceRange: {
+        min: 1047.61,
+        max: 1724.25
+      },
+      marketTrend: 'rising'
+    },
+    fraud: {
+      riskLevel: 'high',
+      confidence: 0.93,
+      flags: ['Unusual price spikes detected', 'Duplicate batch patterns found'],
+      recommendation: 'Investigate flagged transactions before proceeding.'
+    },
+    supplyChain: {
+      recommendedRoute: 'Route-2',
+      optimalStorageTime: 54.0,
+      predictedDeliveryTime: 8.34,
+      expectedSpoilage: 5.0,
+      quantityToSend: 272
+    }
+  };
+};
 
 // Simulate ML predictions based on batch data
 export const generateMLInsights = (batch: any): MLInsights => {
@@ -56,6 +97,13 @@ export const generateMLInsights = (batch: any): MLInsights => {
       confidence: fraudRisk.confidence,
       flags: fraudRisk.flags,
       recommendation: fraudRisk.recommendation
+    },
+    supplyChain: {
+      recommendedRoute: 'Route-1',
+      optimalStorageTime: Math.random() * 48 + 24,
+      predictedDeliveryTime: Math.random() * 12 + 4,
+      expectedSpoilage: Math.random() * 8 + 2,
+      quantityToSend: Math.round(batch.quantity * (0.9 + Math.random() * 0.1))
     }
   };
 };

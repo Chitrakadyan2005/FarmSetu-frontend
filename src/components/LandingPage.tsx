@@ -246,7 +246,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   className="bg-green-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors text-center"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  Farmer Login
+                  Farmer 
                 </button>
                 <button
                   onClick={() => onNavigate('login')}

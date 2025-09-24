@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import JourneyModal from '../common/JourneyModal';
+import { getDummyRiceInsights } from '../../utils/mlInsights';
 
 interface RetailerDashboardProps {
   currentPage: string;
@@ -36,8 +37,22 @@ interface InventoryItem {
   status: 'in-stock' | 'low-stock' | 'out-of-stock';
 }
 
+// Dummy Rice inventory from Cuttack
+const dummyRiceInventory: InventoryItem = {
+  id: 'INV004',
+  batchId: 'BATCH-001',
+  product: 'Rice',
+  quantity: 50,
+  price: 1574.26,
+  supplier: 'Cuttack Market',
+  receivedDate: '2025-01-24',
+  expiryDate: '2025-06-24',
+  status: 'in-stock'
+};
+
 // Dummy inventory data
 const dummyInventory: InventoryItem[] = [
+  dummyRiceInventory,
   {
     id: 'INV001',
     batchId: 'BTH001',
@@ -117,30 +132,35 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
   };
 
   const getItemJourney = (item: InventoryItem) => {
-    return [
-      {
-        stage: 'Farm Origin',
-        handler: 'Rajesh Sharma',
-        location: 'Punjab, India',
-        timestamp: '2024-01-15',
-        details: `Harvested ${item.product}`
-      },
-      {
-        stage: 'Distribution Center',
-        handler: item.supplier,
-        location: 'Maharashtra, India',
-        timestamp: '2024-01-16',
-        details: 'Quality checked and packaged'
-      },
-      {
-        stage: 'Retail Store',
-        handler: 'Kirana Fresh Store',
-        location: 'Mumbai, India',
-        timestamp: item.receivedDate,
-        details: 'Received and stocked for sale'
-      }
-    ];
-  };
+  return [
+    {
+      stage: 'District Origin',
+      handler: item.product === 'Rice' ? 'Farmer1' : 'Rajesh Sharma',
+      location: item.product === 'Rice' ? 'Cuttack' : 'Punjab, India',
+      timestamp: '2024-01-15',
+      details: item.product === 'Rice'
+        ? `Harvested ${item.quantity}kg of Rice from Cuttack District`
+        : `Harvested ${item.quantity}kg of ${item.product}`
+    },
+    {
+      stage: 'Market Transfer',
+      handler: item.product === 'Rice' ? 'Cuttack Market' : item.supplier,
+      location: item.product === 'Rice' ? 'Cuttack Market' : 'Maharashtra, India',
+      timestamp: '2024-01-16',
+      details: item.product === 'Rice'
+        ? 'Transferred to Cuttack Market for distribution'
+        : 'Quality checked and packaged'
+    },
+    {
+      stage: 'Retail Store',
+      handler: item.product === 'Rice' ? 'Suresh Store' : 'Kirana Fresh Store',
+      location: item.product === 'Rice' ? 'Cuttack' : 'Mumbai, India',
+      timestamp: item.receivedDate,
+      details: 'Received and stocked for sale'
+    }
+  ];
+};
+
 
   if (currentPage === 'inventory') {
     return (
@@ -207,7 +227,7 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.product}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.batchId}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.quantity} units</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">₹{item.price}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{item.price}{item.id === 'INV004' ? '/quintal' : ''}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.supplier}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>
@@ -247,7 +267,8 @@ const RetailerDashboard: React.FC<RetailerDashboardProps> = ({ currentPage }) =>
               price: selectedItem.price,
               quantity: selectedItem.quantity,
               harvestDate: selectedItem.receivedDate,
-              location: 'Oregon, USA'
+              location: selectedItem.id === 'INV004' ? 'Cuttack' : 'Oregon, USA',
+              ...(selectedItem.id === 'INV004' ? getDummyRiceInsights() : {})
             }}
             journey={getItemJourney(selectedItem)}
             qrValue={getItemQRValue(selectedItem)}

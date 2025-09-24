@@ -18,6 +18,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import AddBatchForm from '../forms/AddBatchForm';
 import JourneyModal from '../common/JourneyModal';
+import { getDummyRiceInsights } from '../../utils/mlInsights';
 
 interface DistributorDashboardProps {
   currentPage: string;
@@ -35,6 +36,27 @@ interface PurchaseRequest {
   status: 'pending' | 'approved' | 'rejected';
 }
 
+// Dummy Rice batch from Cuttack
+const dummyRiceBatch = {
+  id: 'BATCH-001',
+  cropType: 'Rice',
+  quantity: 300,
+  price: 1574.26,
+  supplier: 'Farmer1',
+  receivedDate: '2025-01-24',
+  status: 'distributed' as const,
+  location: 'Cuttack',
+  market: 'Cuttack Market',
+  transfers: [  // Add market transfer stage
+    {
+      to: 'Cuttack Market',
+      location: 'Cuttack Market',
+      timestamp: '2024-01-21',
+      details: 'Transferred to Cuttack Market for distribution'
+    }
+  ]
+};
+
 const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: (page: string) => void }> = ({ currentPage, onNavigate }) => {
   const { batches, transferBatch } = useApp();
   const [scanInput, setScanInput] = useState('');
@@ -48,9 +70,9 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
     price: ''
   });
 
-  const availableBatches = batches.filter(batch => 
+  const availableBatches = [dummyRiceBatch, ...batches.filter(batch => 
     batch.status === 'harvested' || batch.status === 'distributed'
-  );
+  )];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -122,28 +144,31 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
   };
 
   const getBatchJourney = (batch: any) => {
-    const journey = [
-      {
-        stage: 'Farm Origin',
-        handler: batch.farmerName,
-        location: batch.location,
-        timestamp: batch.harvestDate,
-        details: `Harvested ${batch.quantity}kg of ${batch.cropType}`
-      }
-    ];
+  return [
+    {
+      stage: 'District Origin',
+      handler: batch.id === 'BATCH-001' ? 'Farmer1' : batch.farmerName || 'Unknown',
+      location: batch.id === 'BATCH-001' ? 'Cuttack' : batch.location,
+      timestamp: batch.harvestDate,
+      details: `Harvested ${batch.quantity}kg of ${batch.cropType}` + (batch.id === 'BATCH-001' ? ' from Cuttack District' : '')
+    },
+    ...(batch.transfers?.map((transfer: any) => ({
+      stage: 'Market Transfer',
+      handler: transfer.to,
+      location: batch.id === 'BATCH-001' ? 'Cuttack Market' : transfer.location,
+      timestamp: transfer.timestamp,
+      details: `Transferred to ${transfer.to}`
+    })) || []),
+    {
+      stage: 'Retail Store',
+      handler: batch.id === 'BATCH-001' ? 'Suresh Store' : 'Kirana Fresh Store',
+      location: batch.id === 'BATCH-001' ? 'Cuttack' : 'Default Store Location',
+      timestamp: batch.receivedDate || batch.harvestDate,
+      details: 'Received and stocked for sale'
+    },
+  ];
+};
 
-    batch.transfers?.forEach((transfer: any, index: number) => {
-      journey.push({
-        stage: `Transfer ${index + 1}`,
-        handler: transfer.to,
-        location: transfer.location,
-        timestamp: transfer.timestamp,
-        details: `Transferred to ${transfer.to}`
-      });
-    });
-
-    return journey;
-  };
 
   if (currentPage === 'transfers') {
     return (
@@ -207,7 +232,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">{batch.id}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{batch.cropType}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{batch.quantity} kg</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">₹{batch.price}{batch.id === 'BATCH-001' ? '/quintal' : ''}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(batch.status)}`}>
                           {batch.status}
@@ -293,7 +318,7 @@ const DistributorDashboard: React.FC<DistributorDashboardProps & { onNavigate?: 
           <JourneyModal
             isOpen={!!selectedBatch}
             onClose={() => setSelectedBatch(null)}
-            batch={selectedBatch}
+            batch={selectedBatch.id === 'BATCH-001' ? {...selectedBatch, ...getDummyRiceInsights()} : selectedBatch}
             journey={getBatchJourney(selectedBatch)}
             qrValue={getBatchQRValue(selectedBatch)}
             title={`Batch Actions - ${selectedBatch.id}`}
